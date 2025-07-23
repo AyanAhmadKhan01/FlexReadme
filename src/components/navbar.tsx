@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, X, Home, Search, User, Code2, ArrowRight, Github, Twitter, Star, DollarSign, Compass } from "lucide-react"
+import { Menu, Code2, Twitter, Star, DollarSign, Compass } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/modeToggle"
 import {
