@@ -92,7 +92,7 @@ export default function Navbar() {
                 className="w-[300px] overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md"
               >
                 <div className="flex flex-col space-y-3 p-4">
-                  {navItems.map((item, index) => {
+                  {navItems.map((item) => {
                     const IconComponent = item.icon
                     return (
                       <DropdownMenuItem key={item.href} asChild>
