@@ -26,13 +26,9 @@ const faqs = [
 export default function Faq() {
   return (
     <section className="relative py-20 bg-background/80 overflow-hidden">
-      <div className="container max-w-2xl mx-auto px-4 relative z-10">
+      <div className="container max-w-6xl mx-auto px-4 relative z-10">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center space-x-2 bg-muted/80 backdrop-blur-sm border border-border/60 rounded-lg px-4 py-2">
-            <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-            <span className="text-sm font-mono text-muted-foreground">FAQ</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mt-6 mb-2 bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">Frequently Asked Questions</h2>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mt-6 mb-2 text-white">Frequently Asked <span className="text-primary">Questions</span></h2>
           <p className="text-base text-muted-foreground font-mono">{'>'} Everything you need to know</p>
         </div>
         <Accordion type="single" collapsible className="space-y-4">

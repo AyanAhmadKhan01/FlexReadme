@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Github, Code2, Terminal, Cpu, Grid3X3 } from "lucide-react"
+import { ArrowRight, Github, Code2, Terminal, Cpu, Grid3X3, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function Hero() {
@@ -12,11 +12,11 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen bg-background overflow-hidden">
-      {/* Grid Background */}
+     
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-grid-black/[0.02] dark:bg-grid-white/[0.02]" />
       <div className="absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
       
-      {/* Geometric Elements */}
+    
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 right-20 w-72 h-72 bg-purple-500/5 rotate-45 rounded-3xl blur-3xl" />
         <div className="absolute bottom-20 left-20 w-72 h-72 bg-blue-500/5 rotate-12 rounded-3xl blur-3xl" />
@@ -24,36 +24,36 @@ export default function Hero() {
       </div>
 
       <div className="container max-w-[1200px] mx-auto px-4 py-32 relative z-10">
-        {/* Main Content */}
+       
         <div className="text-center space-y-8 max-w-4xl mx-auto">
-          {/* Status Badge */}
-          <div className="inline-flex items-center space-x-2 bg-muted/80 backdrop-blur-sm border border-border/60 rounded-lg px-4 py-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-sm font-mono text-muted-foreground">System operational</span>
+        
+          <div className="inline-flex items-center space-x-2 bg-muted/30 backdrop-blur-sm border border-border/60 rounded-4xl px-4 py-2">
+            <Zap size={20} className="text-yellow-400 animate-pulse"/>
+            <span className="text-sm font-mono text-muted-foreground">Trusted by 2 developers</span>
           </div>
 
-          {/* Hero Heading */}
+      
           <div className="space-y-6">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-none">
               <span className="block">Build</span>
-              <span className="block bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="block text-primary">
                 README
               </span>
               <span className="block">Like a Pro</span>
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-mono">
-              {'>'} Modern markdown editor for professional documentation
+              {'>'} Generate better READMEs, faster — with AI
               <br />
               {'>'} Ship better docs, faster
             </p>
           </div>
 
-          {/* CTA Section */}
+         
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
             <Button 
               size="lg" 
-              className="text-base px-8 py-6 h-auto bg-purple-600 hover:bg-purple-700 text-white font-mono"
+              className="text-base px-8 py-4 h-auto bg-purple-600 hover:bg-purple-700 text-white font-mono"
               asChild
             >
               <Link href="/editor">
@@ -65,10 +65,10 @@ export default function Hero() {
             <Button 
               size="lg" 
               variant="outline" 
-              className="text-base px-8 py-6 h-auto font-mono border-border/60"
+              className="text-base px-8 py-4 h-auto font-mono border-border/60"
               asChild
             >
-              <Link href="https://github.com/yourusername/flexreadme" target="_blank">
+              <Link href="https://github.com/AyanAhmadKhan01/FlexReadme" target="_blank">
                 <Github className="mr-2 h-4 w-4" />
                 View source
               </Link>
@@ -76,7 +76,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Features Grid */}
+      
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-24 max-w-6xl mx-auto">
           {features.map((feature, index) => {
             const IconComponent = feature.icon
@@ -99,53 +99,7 @@ export default function Hero() {
             )
           })}
         </div>
-
-        {/* Terminal Mock */}
-        <div className="mt-24 max-w-4xl mx-auto">
-          <div className="rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm overflow-hidden">
-            <div className="flex items-center space-x-2 px-4 py-3 bg-muted/50 border-b border-border/60">
-              <div className="flex space-x-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                <div className="w-3 h-3 rounded-full bg-green-500/60" />
-              </div>
-              <span className="text-sm font-mono text-muted-foreground ml-4">flexreadme-editor.md</span>
-            </div>
-            <div className="p-6 font-mono text-sm">
-              <div className="space-y-2">
-                <div className="flex">
-                  <span className="text-purple-400">1</span>
-                  <span className="ml-4 text-blue-400"># FlexReadme</span>
-                </div>
-                <div className="flex">
-                  <span className="text-purple-400">2</span>
-                  <span className="ml-4 text-muted-foreground">Beautiful documentation made simple</span>
-                </div>
-                <div className="flex">
-                  <span className="text-purple-400">3</span>
-                  <span className="ml-4"></span>
-                </div>
-                <div className="flex">
-                  <span className="text-purple-400">4</span>
-                  <span className="ml-4 text-green-400">## Features</span>
-                </div>
-                <div className="flex">
-                  <span className="text-purple-400">5</span>
-                  <span className="ml-4 text-muted-foreground">- Live preview</span>
-                </div>
-                <div className="flex">
-                  <span className="text-purple-400">6</span>
-                  <span className="ml-4 text-muted-foreground">- Smart templates</span>
-                </div>
-                <div className="flex">
-                  <span className="text-purple-400">7</span>
-                  <span className="ml-4 text-yellow-400 animate-pulse">|</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+       </div>
     </section>
   )
 }

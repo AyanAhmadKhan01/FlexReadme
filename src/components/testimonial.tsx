@@ -44,29 +44,24 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 export default function Testimonal() {
 	const ROWS = 3
 	const COLS = 3
-	// Repeat testimonials to fill the grid and for infinite effect
+
 	const repeated = Array(3).fill(testimonials).flat()
 	const gridChunks = chunkArray(repeated, COLS)
 	const displayRows = gridChunks.slice(0, ROWS)
-	// Only 3 rows, but duplicate each row's cards for seamless infinite scroll
+	
 	const wallCards = displayRows.map((row) => [...row, ...row])
 
 	return (
 		<section className="relative py-20 bg-background/80 overflow-hidden">
 			<div className="container max-w-6xl mx-auto px-4 relative z-10">
 				<div className="text-center mb-10">
-					<div className="inline-flex items-center space-x-2 bg-muted/80 backdrop-blur-sm border border-border/60 rounded-lg px-4 py-2">
-						<div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-						<span className="text-sm font-mono text-muted-foreground">
-							Testimonials
-						</span>
-					</div>
-					<h2 className="text-3xl md:text-4xl font-bold tracking-tighter mt-6 mb-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
-						What people are saying
+				
+					<h2 className="text-3xl md:text-4xl font-bold tracking-tighter mt-6 mb-2 text-white">
+						What people <span className="text-primary">are saying</span> 
 					</h2>
 				</div>
 				<div className="overflow-x-hidden custom-hide-scrollbar relative">
-					{/* Foggy gradient overlays */}
+					
 					<div
 						className="pointer-events-none absolute inset-y-0 left-0 w-16 z-20"
 						style={{
@@ -101,7 +96,7 @@ export default function Testimonal() {
 										<img
 											src={t.avatar}
 											alt={t.name}
-											className="w-14 h-14 rounded-full border-2 border-yellow-400 mb-3 shadow"
+											className="w-14 h-14 rounded-full border-2 border-primary mb-3 shadow"
 										/>
 										<div className="text-lg font-semibold text-foreground font-mono mb-1">
 											{t.name}

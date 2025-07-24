@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, Code2, Twitter, Star, DollarSign, Compass, StretchHorizontal } from "lucide-react"
+import { Menu, Code2, Twitter, Star, DollarSign, Compass, StretchHorizontal, MousePointerClick } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/modeToggle"
 import {
@@ -20,6 +20,7 @@ export default function Navbar() {
     { href: "/discover", label: "Discover", icon: Compass },
     { href: "/editor", label: "Editor", icon: Code2 },
     { href: "/pricing", label: "Pricing", icon: DollarSign },
+      { href: "/tutorial", label: "How To Use", icon: MousePointerClick },
   ]
 
   return (

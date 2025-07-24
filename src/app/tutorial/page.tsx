@@ -1,7 +1,7 @@
-export default function Pricing() {
+export default function Tutorial() {
     return(
         <>
-         <section className="min-h-screen flex flex-col items-center justify-center bg-background">
+        <section className="min-h-screen flex flex-col items-center justify-center bg-background">
       <h1 className="text-6xl md:text-8xl font-bold text-center text-primary drop-shadow-xl">
         Coming soon
       </h1>
