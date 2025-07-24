@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, Code2, Twitter, Star, DollarSign, Compass } from "lucide-react"
+import { Menu, Code2, Twitter, Star, DollarSign, Compass, StretchHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/modeToggle"
 import {
@@ -28,8 +28,8 @@ export default function Navbar() {
 
         <div className="flex-shrink-0 hidden md:flex">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">F</span>
+            <div className="flex h-8 w-8 items-center justify-center">
+              <span className="text-sm font-bold text-primary-foreground"><StretchHorizontal /></span>
             </div>
             <span className="hidden font-bold sm:inline-block">
               FlexReadme
@@ -39,8 +39,8 @@ export default function Navbar() {
 
         <div className="flex-shrink-0 flex md:hidden">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">F</span>
+            <div className="flex h-8 w-8 items-center justify-center">
+              <span className="text-sm font-bold text-primary-foreground"><StretchHorizontal /></span>
             </div>
           </Link>
         </div>
@@ -59,16 +59,17 @@ export default function Navbar() {
    
         <div className="flex-shrink-0 flex items-center space-x-2">
           <div className="hidden md:flex items-center space-x-1">
+             <ModeToggle />
+             
             <Button variant="ghost" size="sm" asChild>
               <Link href="https://x.com/DevLegend_" target="_blank">
                 <Twitter className="h-4 w-4" />
                 <span className="sr-only">Twitter</span>
               </Link>
             </Button>
-            <ModeToggle />
-            <div className="h-4 w-px bg-border mx-2" />
+    
             <Button size="sm" asChild>
-              <Link href="" target="_blank">
+              <Link href="https://github.com/AyanAhmadKhan01/FlexReadme" target="_blank">
                 <Star className="mr-1 h-3 w-3" />
                 Star on GitHub
               </Link>
@@ -117,7 +118,7 @@ export default function Navbar() {
                     <ModeToggle />
                   </div>
                   <Button size="sm" className="w-full" asChild>
-                    <Link href="" target="_blank">
+                    <Link href="https://github.com/AyanAhmadKhan01/FlexReadme" target="_blank">
                       <Star className="mr-1 h-3 w-3" />
                       Star on GitHub
                     </Link>
