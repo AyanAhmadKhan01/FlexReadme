@@ -3,7 +3,7 @@ import Footer from "@/components/footer";
 import Hero from "@/components/hero";
 import Features from "@/components/features";
 import Faq from "@/components/faq";
-import Testimonal from "@/components/testimonial";
+// import Testimonal from "@/components/testimonial";
 
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
   <Navbar/>
   <Hero/>
   <Features/>
-  <Testimonal/>
+  {/* <Testimonal/> */}
   <Faq/>
    <Footer/>
   </>

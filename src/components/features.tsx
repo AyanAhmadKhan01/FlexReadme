@@ -10,7 +10,6 @@ export default function Features() {
       icon: Bot,
       title: "AI-Powered Generation",
       description: "Smart content generation with contextual understanding",
-      gradient: "from-purple-500/10 to-blue-500/10",
       iconBg: "bg-purple-500/10 group-hover:bg-purple-500/20",
       iconColor: "text-purple-400",
       size: "large",
@@ -20,8 +19,6 @@ export default function Features() {
       icon: Edit3,
       title: "Live Editor",
       description: "Real-time markdown editing with instant preview",
-      detail: "See your changes instantly with our advanced live preview engine.",
-      gradient: "from-blue-500/10 to-cyan-500/10",
       iconBg: "bg-blue-500/10 group-hover:bg-blue-500/20",
       iconColor: "text-blue-400",
       size: "medium",
@@ -30,9 +27,7 @@ export default function Features() {
     {
       icon: Palette,
       title: "Premium Themes",
-      description: "Beautiful templates for professional documentation",
-      detail: "Choose from professionally designed themes and customize to match your brand.",
-      gradient: "from-cyan-500/10 to-purple-500/10",
+      description: "Beautiful templates for professional documentation",   
       iconBg: "bg-cyan-500/10 group-hover:bg-cyan-500/20",
       iconColor: "text-cyan-400",
       size: "medium",
@@ -41,12 +36,10 @@ export default function Features() {
     {
       icon: Zap,
       title: "Bento Design",
-      description: "Modern grid-based layouts for better organization",
-      detail: "Organize content with beautiful bento-style layouts.",
-      gradient: "from-yellow-500/10 to-orange-500/10",
+      description: "Modern grid-based layouts for better organization",  
       iconBg: "bg-yellow-500/10 group-hover:bg-yellow-500/20",
       iconColor: "text-yellow-400",
-      size: "small",
+      size: "large",
       hasBentoPreview: true
     }
   ]
@@ -99,7 +92,7 @@ export default function Features() {
                     <div className="absolute inset-2 rounded-xl bg-primary/5 backdrop-blur-xl border border-primary/20 flex flex-col justify-center items-center space-y-8 p-8 pt-20 shadow-2xl">
            
                       <div className="relative">
-                        <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+                        <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary" />
                         <div className="absolute inset-0 w-12 h-12 rounded-full border border-primary/10 animate-pulse" />
                         <div className="absolute inset-2 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                           <Sparkles className="h-4 w-4 text-primary animate-pulse" />
@@ -136,7 +129,7 @@ export default function Features() {
                     <div className="absolute inset-2 rounded-xl bg-blue-500/5 backdrop-blur-xl border border-blue-500/20 flex flex-col justify-center items-center space-y-10 p-8 pt-24 shadow-2xl">
                      
                       <div className="relative mt-8">
-                        <div className="w-10 h-10 rounded-lg border-2 border-blue-500/20 border-l-blue-500 animate-spin" />
+                        <div className="w-10 h-10 rounded-lg border-2 border-blue-500/20 border-l-blue-500" />
                         <div className="absolute inset-0 w-10 h-10 rounded-lg border border-blue-500/10 animate-pulse" />
                         <div className="absolute inset-2 w-6 h-6 rounded-sm bg-blue-500/10 flex items-center justify-center">
                           <Edit3 className="h-3 w-3 text-blue-500 animate-pulse" />
@@ -191,7 +184,7 @@ export default function Features() {
                   <div className="absolute inset-0 opacity-100 transition-all duration-700 transform group-hover:scale-105">
                     <div className="absolute inset-2 rounded-xl bg-cyan-500/5 backdrop-blur-xl border border-cyan-500/20 flex flex-col justify-center items-center space-y-10 p-8 pt-24 shadow-2xl">              
                       <div className="relative mt-8">
-                        <div className="w-10 h-10 rounded-xl border-2 border-cyan-500/20 border-r-cyan-500 animate-spin" />
+                        <div className="w-10 h-10 rounded-xl border-2 border-cyan-500/20 border-r-cyan-500" />
                         <div className="absolute inset-0 w-10 h-10 rounded-xl border border-cyan-500/10 animate-pulse" />
                         <div className="absolute inset-2 w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center">
                           <Palette className="h-3 w-3 text-cyan-500 animate-pulse" />
@@ -250,10 +243,9 @@ export default function Features() {
                 {feature.hasBentoPreview && (
                   <div className="absolute inset-0 opacity-100 transition-all duration-700 transform group-hover:scale-105">
                     <div className="absolute inset-2 rounded-xl bg-yellow-500/5 backdrop-blur-xl border border-yellow-500/20 flex flex-col justify-center items-center space-y-8 p-6 pt-20 shadow-2xl">
-                      {/* Bento Loading Animation */}
                       <div className="relative mt-6">
-                        <div className="w-10 h-10 rounded-lg border-2 border-yellow-500/20 border-r-yellow-500 animate-spin" />
-                        <div className="absolute inset-0 w-10 h-10 rounded-lg border border-yellow-500/10 animate-pulse" />
+                        <div className="w-10 h-10 rounded-lg border-2 border-yellow-500/20 border-r-yellow-500 rotate-45" />
+                        <div className="absolute inset-0 w-10 h-10 rounded-lg border border-yellow-500/10" />
                         <div className="absolute inset-2 w-6 h-6 rounded-sm bg-yellow-500/10 flex items-center justify-center">
                           <Zap className="h-3 w-3 text-yellow-500 animate-pulse" />
                         </div>
@@ -328,26 +320,7 @@ export default function Features() {
                   <p className="text-muted-foreground font-mono text-sm leading-relaxed">
                     {feature.description}
                   </p>
-                  
-          
-                  {feature.size === 'large' && feature.detail && (
-                    <div className="mt-auto group-hover:opacity-0 transition-opacity duration-500">
-                      <div className="p-4 rounded-lg bg-muted/30 border border-border/40">
-                        <p className="text-sm text-muted-foreground font-mono">
-                          {feature.detail}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {!feature.hasSearchBar && !feature.hasLiveEditor && !feature.hasThemePreview && !feature.hasBentoPreview && (
-                    <div className="mt-auto pt-4 group-hover:opacity-0 transition-opacity duration-500">
-                      <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground">
-                        <span className={`w-2 h-2 rounded-full ${feature.iconColor.replace('text-', 'bg-')}`} />
-                        <span>./feature-{index + 1}</span>
-                      </div>
-                    </div>
-                  )}
+                          
                 </div>
               </div>
             )
