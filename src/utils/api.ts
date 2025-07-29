@@ -2,8 +2,7 @@ import axios from "axios";
 
 type Method = "GET" | "POST" ;
 
-
-export const fetchApi = async (url: string, method: Method = 'GET', body?:any): Promise<any> => {
+export const fetchApi = async <T = unknown>(url: string, method: Method = 'GET', body?: unknown): Promise<T> => {
   try {
     const response = await axios({
       url,
