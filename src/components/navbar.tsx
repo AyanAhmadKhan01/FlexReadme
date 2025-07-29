@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -22,6 +23,7 @@ export default function Navbar() {
     { href: "/pricing", label: "Pricing", icon: DollarSign },
       { href: "/tutorial", label: "How To Use", icon: MousePointerClick },
   ]
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -72,7 +74,7 @@ export default function Navbar() {
             <Button size="sm" asChild>
               <Link href="https://github.com/AyanAhmadKhan01/FlexReadme" target="_blank">
                 <Star className="mr-1 h-3 w-3" />
-                Star on GitHub
+               Star on GitHub
               </Link>
             </Button>
           </div>
@@ -121,7 +123,7 @@ export default function Navbar() {
                   <Button size="sm" className="w-full" asChild>
                     <Link href="https://github.com/AyanAhmadKhan01/FlexReadme" target="_blank">
                       <Star className="mr-1 h-3 w-3" />
-                      Star on GitHub
+                     Star on GitHub
                     </Link>
                   </Button>
                 </div>

@@ -1,6 +1,10 @@
+'use client'
+
 import Link from "next/link"
 import { ArrowRight, Github, Code2, Terminal, Cpu, Grid3X3, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useGithubStars } from "@/utils/githubStars"
+
 
 export default function Hero() {
   const features = [
@@ -9,6 +13,8 @@ export default function Hero() {
     { icon: Cpu, text: "Fast Rendering", desc: "Optimized performance" },
     { icon: Grid3X3, text: "Templates", desc: "Professional layouts" },
   ]
+
+    const {data} = useGithubStars();
 
   return (
     <section className="relative min-h-screen bg-background overflow-hidden">
@@ -29,7 +35,7 @@ export default function Hero() {
         
           <div className="inline-flex items-center space-x-2 bg-muted/30 backdrop-blur-sm border border-border/60 rounded-4xl px-4 py-2">
             <Zap size={20} className="text-yellow-400 animate-pulse"/>
-            <span className="text-sm font-mono text-muted-foreground">Trusted by 2 developers</span>
+            <span className="text-sm font-mono text-muted-foreground">Trusted by {data?.stargazers_count} developers</span>
           </div>
 
       

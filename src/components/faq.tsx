@@ -3,25 +3,30 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 const faqs = [
   {
     question: "What is FlexReadme?",
-    answer: "FlexReadme is a modern documentation tool that helps you create beautiful, interactive, and professional README files with ease."
+    answer: "FlexReadme is a GitHub README generator powered by AI that creates polished, context‑aware documentation in seconds."
   },
   {
-    question: "How does AI-powered generation work?",
-    answer: "Our AI analyzes your project and generates context-aware content to jumpstart your documentation."
+    question: "How many free uses do I get?",
+    answer: "Every user receives 5 free AI‑powered README generations per month."
   },
   {
-    question: "Can I customize the themes?",
-    answer: "Yes! You can choose from premium themes and customize them to match your brand."
+    question: "What templates are available?",
+    answer: "We offer a free Bento template by default, and you can customize it to match your project’s style."
   },
   {
-    question: "Is there a live editor?",
-    answer: "Absolutely. Edit your markdown and see instant previews as you type."
+    question: "Where are my generated READMEs stored?",
+    answer: "All your READMEs are saved automatically on the Discover page of your FlexReadme account."
   },
   {
-    question: "What is Bento Design?",
-    answer: "Bento Design is a modern grid-based layout system for organizing your documentation in visually appealing sections."
+    question: "Is FlexReadme really free?",
+    answer: "Yes—FlexReadme is completely free to use. There are no hidden fees or paid tiers."
+  },
+  {
+    question: "Can I customize the Bento theme?",
+    answer: "Absolutely—you can tweak colors, layout, and typography in the Bento theme to fit your brand."
   }
-]
+];
+
 
 export default function Faq() {
   return (
@@ -37,7 +42,7 @@ export default function Faq() {
               <AccordionTrigger className="px-6 py-4 font-mono text-lg text-foreground hover:bg-muted/40 transition-all">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 text-muted-foreground font-mono text-base">
+              <AccordionContent className="px-6 pt-3 pb-6 text-muted-foreground font-mono text-base">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
