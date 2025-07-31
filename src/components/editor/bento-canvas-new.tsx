@@ -27,7 +27,7 @@ interface BentoItem {
   id: string
   type: string
   title: string
-  content: any
+  content: Record<string, unknown>
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean
@@ -85,30 +85,6 @@ export function BentoCanvas({
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget && onDeselectAll) {
       onDeselectAll()
-    }
-  }
-
-  const handleExportScreenshot = async () => {
-    if (!canvasRef.current) return
-
-    try {
-      const html2canvas = (await import('html2canvas')).default
-      
-      const canvas = await html2canvas(canvasRef.current, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false
-      })
-      
-      const link = document.createElement('a')
-      link.download = `github-readme-${Date.now()}.png`
-      link.href = canvas.toDataURL()
-      link.click()
-    } catch (error) {
-      console.error('Error capturing screenshot:', error)
-      alert('Error saving screenshot. Please try again.')
     }
   }
 
@@ -256,7 +232,7 @@ export function BentoCanvas({
     try {
       await navigator.clipboard.writeText(JSON.stringify(item.content))
       alert("Component copied to clipboard!")
-    } catch (err) {
+    } catch {
       alert("Failed to copy component")
     }
   }
@@ -803,7 +779,7 @@ export function BentoCanvas({
               <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Random Quote"}</h3>
               <p className="text-xs opacity-80 font-mono">Daily inspiration</p>
               <div className="text-xs font-mono opacity-80 italic mt-2 px-2 py-1 bg-white/10 rounded">
-                "Code is poetry"
+                &ldquo;Code is poetry&rdquo;
               </div>
             </div>
           </div>

@@ -30,6 +30,31 @@ import {
   Camera
 } from "lucide-react"
 
+interface ComponentItem {
+  id: string
+  type: string
+  title: string
+  content: Record<string, unknown>
+  gridPosition: { row: number; col: number }
+  gridSize: { rows: number; cols: number }
+  visible: boolean
+  backgroundImage?: string
+  useCustomBackground?: boolean
+  backgroundColor?: string
+  useGradient?: boolean
+  gradientFrom?: string
+  gradientTo?: string
+  textColor?: string
+  textSize?: string
+  textWeight?: string
+  overlayOpacity?: number
+  borderRadius?: number
+  fontFamily?: string
+  customText?: string
+  badgeText?: string
+  badgeColor?: string
+}
+
 interface EditorToolbarProps {
   onSave: () => void
   onUndo: () => void
@@ -37,7 +62,7 @@ interface EditorToolbarProps {
   canUndo: boolean
   canRedo: boolean
   isSaving: boolean
-  components: any[]
+  components: ComponentItem[]
   onToggleAI?: () => void
   isAIOpen?: boolean
   onExportPNG?: () => void
@@ -74,13 +99,16 @@ export function EditorToolbar({
     let markdown = "# My GitHub Profile\n\n";
     
     sortedComponents.forEach((component) => {
-      // Ensure component has required properties
-      const content = component.content || {};
+      // Safely access content properties
+      const getContentValue = (key: string, defaultValue: string = ''): string => {
+        const value = component.content[key]
+        return typeof value === 'string' ? value : defaultValue
+      }
       
       switch (component.type) {
         case "header-image":
           markdown += "## 🎨 Welcome to My Profile\n\n";
-          markdown += `![Header](https://capsule-render.vercel.app/api?type=waving&color=gradient&text=${encodeURIComponent(content.title || "Hello World!")}&section=header&size=300&animation=fadeIn)\n\n`;
+          markdown += `![Header](https://capsule-render.vercel.app/api?type=waving&color=gradient&text=${encodeURIComponent(getContentValue('title', "Hello World!"))}&section=header&size=300&animation=fadeIn)\n\n`;
           break;
 
         case "badges-image":

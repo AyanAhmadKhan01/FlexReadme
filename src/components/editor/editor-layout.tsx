@@ -11,7 +11,7 @@ interface BentoItem {
   id: string
   type: string
   title: string
-  content: any
+  content: Record<string, unknown>
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean

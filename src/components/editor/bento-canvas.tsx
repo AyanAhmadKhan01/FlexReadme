@@ -17,7 +17,7 @@ interface BentoItem {
   id: string
   type: string
   title: string
-  content: any
+  content: Record<string, unknown>
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean
@@ -157,19 +157,28 @@ export function BentoCanvas({
     try {
       await navigator.clipboard.writeText(JSON.stringify(item.content))
       alert("Component copied to clipboard!")
-    } catch (err) {
+    } catch {
       alert("Failed to copy component")
     }
   }
 
   const renderComponent = (item: BentoItem) => {
+    // Helper function to safely access content properties
+    const getContentValue = (key: string, defaultValue: string = ''): string => {
+      return (item.content[key] as string) || defaultValue
+    }
+
+    const getContentArray = (key: string, defaultValue: string[] = []): string[] => {
+      const value = item.content[key]
+      return Array.isArray(value) ? value : defaultValue
+    }
     switch (item.type) {
       case "header-image":
         return (
           <div className="p-4 h-full flex flex-col items-center justify-center text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg">
             <div className="text-4xl mb-2">🎨</div>
-            <h1 className="text-xl font-bold mb-2">{item.content.title || "Your Repository Name"}</h1>
-            <p className="text-sm opacity-90">{item.content.subtitle || "Amazing project description"}</p>
+            <h1 className="text-xl font-bold mb-2">{getContentValue('title', "Your Repository Name")}</h1>
+            <p className="text-sm opacity-90">{getContentValue('subtitle', "Amazing project description")}</p>
             <div className="mt-3 text-xs opacity-75">
               Generated header banner image
             </div>
@@ -181,7 +190,7 @@ export function BentoCanvas({
           <div className="p-4 h-full flex flex-col">
             <h3 className="text-sm font-medium mb-3">🏷️ Badges</h3>
             <div className="flex flex-wrap gap-2 flex-1 content-start">
-              {(item.content.badges || ["![Build Status](https://img.shields.io/badge/build-passing-brightgreen)", "![Version](https://img.shields.io/badge/version-1.0.0-blue)", "![License](https://img.shields.io/badge/license-MIT-green)"]).map((badge: string, index: number) => (
+              {getContentArray('badges', ["![Build Status](https://img.shields.io/badge/build-passing-brightgreen)", "![Version](https://img.shields.io/badge/version-1.0.0-blue)", "![License](https://img.shields.io/badge/license-MIT-green)"]).map((badge: string, index: number) => (
                 <Badge key={index} variant="outline" className="text-xs h-fit">{badge.replace(/!\[(.*?)\]\(.*?\)/, '$1')}</Badge>
               ))}
             </div>
@@ -202,8 +211,8 @@ export function BentoCanvas({
           <div className="p-4 h-full flex flex-col">
             <h3 className="text-base lg:text-lg font-semibold mb-3">⚡ Installation</h3>
             <div className="bg-muted rounded-md p-3 flex-1 flex flex-col gap-2">
-              <code className="text-xs lg:text-sm">npm install {item.content.package || "your-package"}</code>
-              <code className="text-xs lg:text-sm">yarn add {item.content.package || "your-package"}</code>
+              <code className="text-xs lg:text-sm">npm install {getContentValue('package', "your-package")}</code>
+              <code className="text-xs lg:text-sm">yarn add {getContentValue('package', "your-package")}</code>
             </div>
           </div>
         )
@@ -229,7 +238,7 @@ function App() {
           <div className="p-4 h-full flex flex-col">
             <h3 className="text-base lg:text-lg font-semibold mb-3">✨ Features</h3>
             <ul className="space-y-2 flex-1 overflow-y-auto">
-              {(item.content.features || ["🚀 Fast and lightweight", "📱 Responsive design", "🔧 Easy to customize", "📦 Zero dependencies"]).map((feature: string, index: number) => (
+              {getContentArray('features', ["🚀 Fast and lightweight", "📱 Responsive design", "🔧 Easy to customize", "📦 Zero dependencies"]).map((feature: string, index: number) => (
                 <li key={index} className="flex items-start gap-2">
                   <span className="text-xs lg:text-sm line-clamp-2">{feature}</span>
                 </li>

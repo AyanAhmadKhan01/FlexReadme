@@ -16,7 +16,7 @@ interface BentoItem {
   id: string
   type: string
   title: string
-  content: any
+  content: Record<string, unknown>
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean
@@ -272,10 +272,10 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
         {/* Styling Tabs */}
         <div className="space-y-4">
           <div className="flex border-b border-border/40 overflow-x-auto">
-            {["background", "text", "effects"].map((tab) => (
+            {(["background", "text", "effects"] as const).map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab as any)}
+                onClick={() => setActiveTab(tab)}
                 className={`px-3 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === tab
                     ? "border-primary text-primary"
@@ -407,8 +407,9 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                     size="sm" 
                     onClick={handleCustomImageSubmit}
                     disabled={!customImageUrl.trim()}
+                    aria-label="Apply custom background image"
                   >
-                    <Image className="w-3 h-3" />
+                    <Image className="w-3 h-3" aria-hidden="true" />
                   </Button>
                 </div>
               </div>
