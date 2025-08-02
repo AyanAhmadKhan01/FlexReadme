@@ -6,6 +6,7 @@ import { ComponentCustomizer } from "@/components/editor/component-customizer"
 import { AiChat } from "@/components/editor/ai-chat-new"
 import { BentoCanvas } from "@/components/editor/bento-canvas-new"
 import { EditorToolbar } from "@/components/editor/editor-toolbar"
+import { CUSTOM_CARD_TEMPLATES } from "@/components/editor/custom-card-templates"
 
 interface BentoItem {
   id: string
@@ -15,6 +16,7 @@ interface BentoItem {
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean
+  customComponent?: string // For custom card components
   backgroundImage?: string
   useCustomBackground?: boolean
   backgroundColor?: string
@@ -108,26 +110,41 @@ export function EditorLayout() {
     const defaultGridPosition = gridPosition || findAvailablePosition()
     const defaultGridSize = { rows: 2, cols: 3 }
 
-   
-    if (componentType === "title") {
+    // Handle custom cards
+    let customComponent = undefined
+    let actualComponentType = componentType
+    let customTitle = componentType.charAt(0).toUpperCase() + componentType.slice(1)
+    
+    if (componentType.startsWith("custom-card-")) {
+      const templateId = componentType.replace("custom-card-", "")
+      customComponent = templateId
+      actualComponentType = "custom-card"
+      
+      // Find the template and use its name as title
+      const template = CUSTOM_CARD_TEMPLATES.find(t => t.id === templateId)
+      customTitle = template ? template.name : "Custom Card"
+    }
+
+    if (actualComponentType === "title") {
       defaultGridSize.rows = 3
       defaultGridSize.cols = 6
-    } else if (componentType === "badges") {
+    } else if (actualComponentType === "badges") {
       defaultGridSize.rows = 1
       defaultGridSize.cols = 4
-    } else if (componentType === "stats") {
+    } else if (actualComponentType === "stats") {
       defaultGridSize.rows = 2
       defaultGridSize.cols = 4
     }
     
     const newItem: BentoItem = {
-      id: `${componentType}-${Date.now()}`,
-      type: componentType,
-      title: componentType.charAt(0).toUpperCase() + componentType.slice(1),
-      content: {},
+      id: `${actualComponentType}-${Date.now()}`,
+      type: actualComponentType,
+      title: customTitle,
+      content: customComponent ? { templateId: customComponent } : {},
       gridPosition: defaultGridPosition,
       gridSize: defaultGridSize,
       visible: true,
+      customComponent,
       backgroundImage: "https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg",
       useCustomBackground: false
     }

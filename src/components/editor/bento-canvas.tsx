@@ -12,6 +12,7 @@ import {
   EyeOff,
   Move
 } from "lucide-react"
+import { renderCustomCard } from "@/components/editor/custom-card-templates"
 
 interface BentoItem {
   id: string
@@ -21,6 +22,7 @@ interface BentoItem {
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean
+  customComponent?: string // For custom card components
 }
 
 interface BentoCanvasProps {
@@ -172,6 +174,12 @@ export function BentoCanvas({
       const value = item.content[key]
       return Array.isArray(value) ? value : defaultValue
     }
+
+    // Handle custom cards
+    if (item.type === "custom-card" && item.customComponent) {
+      return renderCustomCard(item.customComponent)
+    }
+
     switch (item.type) {
       case "header-image":
         return (
