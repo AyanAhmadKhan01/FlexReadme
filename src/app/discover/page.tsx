@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from "react"
 import DiscoverHero from "../../components/discover-hero"
 import TemplateCard from "../../components/template-card"
+import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 
-// Mock data for templates
 const mockTemplates = [
   {
     id: "1",
@@ -110,114 +110,23 @@ const mockTemplates = [
 ]
 
 export default function DiscoverPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeFilter, setActiveFilter] = useState("all")
-
-  // Filter templates based on search and category
-  const filteredTemplates = mockTemplates.filter((template) => {
-    const matchesSearch = searchQuery === "" || 
-      template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-
-    const matchesFilter = activeFilter === "all" || 
-      template.category === activeFilter ||
-      (activeFilter === "trending" && template.isTrending) ||
-      (activeFilter === "popular" && template.isPopular)
-
-    return matchesSearch && matchesFilter
-  })
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section with Search and Filters */}
-      <DiscoverHero
-        onSearch={setSearchQuery}
-        onFilterChange={setActiveFilter}
-        searchQuery={searchQuery}
-        activeFilter={activeFilter}
-      />
-
-      {/* Info Banner */}
-      <section className="container max-w-[1200px] mx-auto px-4 -mt-10 mb-8 relative z-20">
-        <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-border rounded-xl p-6 backdrop-blur-sm">
-          <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-2xl">📸</span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Image-Based README Templates</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Unlike traditional text-based templates, these generate <strong>actual images</strong> (stats cards, badges, graphs) 
-                that are dynamically created and embedded in your README. See exactly how your README will look on GitHub 
-                with real image previews, then copy the markdown code that generates those images.
-              </p>
-              <div className="flex items-center space-x-4 mt-3 text-xs text-muted-foreground">
-                <span>✅ Live image previews</span>
-                <span>✅ Copy-ready markdown</span>
-                <span>✅ Dynamic GitHub stats</span>
-                <span>✅ Auto-updating badges</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Templates Grid */}
+      <Navbar/>
+      <DiscoverHero/>
       <section className="container max-w-[1200px] mx-auto px-4 pb-20">
-        {/* Results Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">
-              {filteredTemplates.length} Template{filteredTemplates.length !== 1 ? 's' : ''} Found
-            </h2>
-            <p className="text-muted-foreground font-mono text-sm">
-              {searchQuery && `Results for "${searchQuery}" • `}
-              {activeFilter !== "all" && `${activeFilter} category • `}
-              📸 Image-based previews included
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
+            {mockTemplates.map((template, i) => (
+          <TemplateCard template={template} key={i}/>   
+               ))}
           </div>
-
-          {/* Sort Options */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-mono text-muted-foreground">Sort by:</span>
-            <select className="bg-card border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20">
-              <option value="popular">Most Popular</option>
-              <option value="recent">Most Recent</option>
-              <option value="downloads">Most Downloaded</option>
-              <option value="stars">Most Starred</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Templates Grid */}
-        {filteredTemplates.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTemplates.map((template) => (
-              <TemplateCard key={template.id} template={template} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🔍</span>
-            </div>
-            <h3 className="text-xl font-semibold mb-2">No templates found</h3>
-            <p className="text-muted-foreground font-mono text-sm">
-              Try adjusting your search terms or filters
-            </p>
-          </div>
-        )}
-
-        {/* Load More Button */}
-        {filteredTemplates.length > 0 && (
           <div className="text-center mt-12">
             <button className="px-8 py-3 bg-card border border-border rounded-lg hover:bg-card/80 transition-colors font-mono text-sm">
               Load More Templates
             </button>
           </div>
-        )}
       </section>
+      <Footer/>
     </div>
   )
 }

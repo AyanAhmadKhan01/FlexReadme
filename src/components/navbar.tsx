@@ -20,10 +20,8 @@ export default function Navbar() {
   const navItems = [
     { href: "/discover", label: "Discover", icon: Compass },
     { href: "/editor", label: "Editor", icon: Code2 },
-    { href: "/generator", label: "Generator", icon: Menu },
     { href: "/pricing", label: "Pricing", icon: DollarSign },
     { href: "/tutorial", label: "How To Use", icon: MousePointerClick },
-    { href: "/contribute", label: "Contribute", icon: Heart },
   ]
 
 
