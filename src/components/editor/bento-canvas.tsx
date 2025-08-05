@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card"
 import { 
   Trash2, 
   Edit3, 
-  Copy, 
   Eye,
   EyeOff,
   Move,
@@ -214,18 +213,6 @@ export function BentoCanvas({
       if (newBadgeText !== null) {
         onUpdateItem(itemId, { badgeText: newBadgeText })
       }
-    }
-  }
-
-  const handleCopy = async (itemId: string) => {
-    const item = items.find(i => i.id === itemId)
-    if (!item) return
-
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(item.content))
-      alert("Component copied to clipboard!")
-    } catch {
-      alert("Failed to copy component")
     }
   }
 
@@ -781,7 +768,7 @@ export function BentoCanvas({
           className={`relative cursor-move select-none transition-all duration-300 ${
             selectedItem === item.id 
               ? "ring-2 ring-purple-500/60 shadow-xl z-10 border-2 border-purple-500/40" 
-              : "hover:shadow-lg border-2 border-border/40 hover:border-border/60"
+              : "hover:shadow-lg border-0 border-border/40 hover:border-border/60"
           } ${!item.visible ? "opacity-50" : ""} ${
             draggedItem === item.id ? "z-50 scale-105 shadow-xl ring-2 ring-primary/50" : ""
           } group bg-transparent`}
@@ -828,18 +815,7 @@ export function BentoCanvas({
                 }}
               >
                 <Edit3 className="w-3 h-3" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-7 w-7 p-0 bg-black/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-black/90 text-white hover:text-white"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleCopy(item.id)
-                }}
-              >
-                <Copy className="w-3 h-3" />
-              </Button>
+              </Button>     
               <Button
                 size="sm"
                 variant="ghost"

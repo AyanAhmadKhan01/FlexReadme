@@ -8,8 +8,6 @@ import { Badge } from "@/components/ui/badge"
 import { 
   Image, 
   Palette,
-  RefreshCw,
-  ExternalLink
 } from "lucide-react"
 
 interface BentoItem {
@@ -49,28 +47,28 @@ interface ComponentCustomizerProps {
 
 const DEFAULT_BACKGROUNDS = [
   {
-    name: "Galaxy Purple",
+    name: "Anime",
     url: "https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg"
   },
   {
-    name: "Ocean Blue",
-    url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
+    name: "Mordern",
+    url: "https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738517054/mibpzlnio8ubxfr9qxmh.jpg"
   },
   {
-    name: "Sunset Orange",
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop"
+    name: "Sunset",
+    url: "https://res.cloudinary.com/dt5qoqw6u/image/upload/v1747769215/jbtulhv7aunij06t1caf.jpg"
   },
   {
-    name: "Forest Green",
-    url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop"
+    name: "Landscape",
+    url: "https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738519492/yzso7f025ondga0sc73l.jpg"
   },
   {
-    name: "Mountain Gray",
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&sat=-100"
+    name: "Coding",
+    url: "https://images.unsplash.com/photo-1619410283995-43d9134e7656?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cHJvZ3JhbW1pbmd8ZW58MHx8MHx8fDA%3D"
   },
   {
-    name: "Aurora Pink",
-    url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&h=600&fit=crop"
+    name: "React",
+    url: "https://kinsta.com/wp-content/uploads/2023/04/react-must-be-in-scope-when-using-jsx.jpg"
   }
 ]
 
@@ -137,15 +135,6 @@ const FONT_FAMILIES = [
   { name: "Default", value: "sans", cssClass: "font-sans" },
   { name: "Serif", value: "serif", cssClass: "font-serif" },
   { name: "Mono", value: "mono", cssClass: "font-mono" },
-  { name: "Poppins", value: "var(--font-poppins)", cssClass: "font-['var(--font-poppins)']" },
-  { name: "Inter", value: "var(--font-inter)", cssClass: "font-['var(--font-inter)']" },
-  { name: "Roboto", value: "var(--font-roboto)", cssClass: "font-['var(--font-roboto)']" },
-  { name: "Open Sans", value: "var(--font-open-sans)", cssClass: "font-['var(--font-open-sans)']" },
-  { name: "Lato", value: "var(--font-lato)", cssClass: "font-['var(--font-lato)']" },
-  { name: "Montserrat", value: "var(--font-montserrat)", cssClass: "font-['var(--font-montserrat)']" },
-  { name: "Nunito", value: "var(--font-nunito)", cssClass: "font-['var(--font-nunito)']" },
-  { name: "Source Sans", value: "var(--font-source-sans)", cssClass: "font-['var(--font-source-sans)']" },
-  { name: "Ubuntu", value: "var(--font-ubuntu)", cssClass: "font-['var(--font-ubuntu)']" }
 ]
 
 export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCustomizerProps) {
@@ -154,7 +143,7 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
 
   if (!selectedItem) {
     return (
-      <Card className="w-80 h-full pt-5">
+      <Card className="w-80 h-full py-5">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Palette className="w-5 h-5" />
@@ -207,31 +196,10 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
     }
   }
 
-  const resetToDefault = () => {
-    onUpdateItem(selectedItem.id, {
-      backgroundImage: DEFAULT_BACKGROUNDS[0].url,
-      useCustomBackground: false,
-      backgroundColor: undefined,
-      useGradient: false,
-      textColor: "#ffffff",
-      textSize: "md",
-      textWeight: "medium",
-      overlayOpacity: 20,
-      borderRadius: 8,
-      fontFamily: "sans",
-      customText: undefined,
-      badgeText: undefined,
-      badgeColor: undefined,
-      borderWidth: 1,
-      borderColor: "#ffffff",
-      iconColor: "#ffffff",
-      iconBgColor: "rgba(255, 255, 255, 0.1)",
-      iconBorderColor: "rgba(255, 255, 255, 0.2)"
-    })
-  }
+
 
   return (
-    <Card className="w-full sm:w-80 h-full flex flex-col">
+    <Card className="w-full sm:w-80 h-full flex flex-col pt-5 ">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center gap-2">
           <Palette className="w-5 h-5" />
@@ -268,16 +236,7 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
           {activeTab === "background" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">Background Style</div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={resetToDefault}
-                  className="text-xs"
-                >
-                  <RefreshCw className="w-3 h-3 mr-1" />
-                  Reset
-                </Button>
+                <div className="text-sm font-medium">Background Style</div>   
               </div>
 
               <div className="relative rounded-lg overflow-hidden border border-border/40 h-24">
@@ -620,7 +579,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
               
-
               <div>
                 <div className="text-sm font-medium mb-2">Border Radius</div>
                 <div className="grid grid-cols-4 gap-2">
@@ -640,40 +598,8 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
               
-    
-              <div>
-                <div className="text-sm font-medium mb-2">Overlay Opacity</div>
-                <div className="grid grid-cols-5 gap-2">
-                  {[0, 10, 20, 30, 40, 50, 60, 70, 80].map((opacity) => (
-                    <button
-                      key={opacity}
-                      onClick={() => handleTextStyleChange("overlayOpacity", opacity.toString())}
-                      className={`px-2 py-2 text-xs border rounded-md transition-colors ${
-                        selectedItem.overlayOpacity === opacity
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border/40 hover:border-primary/50"
-                      }`}
-                    >
-                      {opacity}%
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
-        </div>
-
-        {/* Tips */}
-        <div className="bg-muted/50 p-3 rounded-lg">
-          <h4 className="text-xs font-medium mb-2 flex items-center gap-1">
-            <ExternalLink className="w-3 h-3" />
-            Pro Tips
-          </h4>
-          <ul className="text-xs text-muted-foreground space-y-1">
-            <li>• Use high-resolution images (800x600+)</li>
-            <li>• Ensure good contrast with text</li>
-            <li>• Test how it looks in the final export</li>
-          </ul>
         </div>
       </CardContent>
     </Card>
