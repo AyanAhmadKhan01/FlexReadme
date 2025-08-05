@@ -85,15 +85,6 @@ const SOLID_COLORS = [
   { name: "Indigo", color: "#6366f1" }
 ]
 
-const GRADIENTS = [
-  { name: "Sunset", from: "#f59e0b", to: "#ef4444" },
-  { name: "Ocean", from: "#3b82f6", to: "#06b6d4" },
-  { name: "Forest", from: "#10b981", to: "#059669" },
-  { name: "Purple Rain", from: "#8b5cf6", to: "#ec4899" },
-  { name: "Night", from: "#1a1a1a", to: "#374151" },
-  { name: "Dawn", from: "#fbbf24", to: "#f59e0b" }
-]
-
 const TEXT_COLORS = [
   { name: "White", color: "#ffffff" },
   { name: "Black", color: "#000000" },
@@ -163,7 +154,7 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
 
   if (!selectedItem) {
     return (
-      <Card className="w-80 h-full">
+      <Card className="w-80 h-full pt-5">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Palette className="w-5 h-5" />
@@ -193,17 +184,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
       backgroundColor: color,
       backgroundImage: undefined,
       useGradient: false,
-      useCustomBackground: true
-    })
-  }
-
-  const handleGradientChange = (from: string, to: string) => {
-    onUpdateItem(selectedItem.id, {
-      useGradient: true,
-      gradientFrom: from,
-      gradientTo: to,
-      backgroundImage: undefined,
-      backgroundColor: undefined,
       useCustomBackground: true
     })
   }
@@ -263,13 +243,11 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
       </CardHeader>
       
       <CardContent className="flex-1 space-y-6 overflow-y-auto">
-        {/* Component Info */}
         <div>
           <div className="text-sm font-medium">Component Title</div>
           <p className="text-sm text-muted-foreground mt-1">{selectedItem.title}</p>
         </div>
-
-        {/* Styling Tabs */}
+ 
         <div className="space-y-4">
           <div className="flex border-b border-border/40 overflow-x-auto">
             {(["background", "text", "effects"] as const).map((tab) => (
@@ -287,7 +265,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
             ))}
           </div>
 
-          {/* Background Tab */}
           {activeTab === "background" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -303,7 +280,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </Button>
               </div>
 
-              {/* Current Background Preview */}
               <div className="relative rounded-lg overflow-hidden border border-border/40 h-24">
                 <div 
                   className="w-full h-full"
@@ -349,28 +325,7 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                   ))}
                 </div>
               </div>
-
-              <div>
-                <div className="text-sm font-medium mb-3 block">Gradients</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {GRADIENTS.map((gradient, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleGradientChange(gradient.from, gradient.to)}
-                      className="relative rounded-md h-12 border border-border/40 hover:border-primary/50 transition-colors"
-                      style={{ 
-                        background: `linear-gradient(45deg, ${gradient.from}, ${gradient.to})` 
-                      }}
-                      title={gradient.name}
-                    >
-                      <div className="absolute inset-0 rounded-md flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/30">
-                        <span className="text-white text-xs font-medium">{gradient.name}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-        
+              
               <div>
                 <div className="text-sm font-medium mb-3 block">Preset Images</div>
                 <div className="grid grid-cols-2 gap-2">
@@ -398,7 +353,7 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 <div className="text-sm font-medium">Custom Image URL</div>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="https://example.com/image.jpg"
+                    placeholder="https://dreamwallv2.vercel.app/img/Wallpapers/Wallpaper%201.jpg"
                     value={customImageUrl}
                     onChange={(e) => setCustomImageUrl(e.target.value)}
                     className="text-xs"
@@ -463,7 +418,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               )}
               
-              {/* Text Colors */}
               <div>
                 <div className="text-sm font-medium mb-3 block">Text Color</div>
                 <div className="grid grid-cols-4 gap-2">
@@ -486,7 +440,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
 
-              {/* Font Family */}
               <div>
                 <div className="text-sm font-medium mb-2">Font Family</div>
                 <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
@@ -507,7 +460,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
 
-              {/* Text Size */}
               <div>
                 <div className="text-sm font-medium mb-2">Text Size</div>
                 <div className="grid grid-cols-4 gap-1">
@@ -535,7 +487,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
 
-              {/* Text Weight */}
               <div>
                 <div className="text-sm font-medium mb-2">Text Weight</div>
                 <div className="grid grid-cols-3 gap-2">
@@ -563,16 +514,13 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
             </div>
           )}
 
-          {/* Effects Tab */}
           {activeTab === "effects" && (
             <div className="space-y-4">
               <div className="text-sm font-medium">Visual Effects</div>
               
-              {/* Border Settings */}
               <div className="space-y-3">
                 <div className="text-sm font-medium">Border Settings</div>
                 
-                {/* Border Width */}
                 <div>
                   <div className="text-sm font-medium mb-2 text-muted-foreground">Border Width</div>
                   <div className="grid grid-cols-6 gap-2">
@@ -592,7 +540,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                   </div>
                 </div>
 
-                {/* Border Color */}
                 <div>
                   <div className="text-sm font-medium mb-2 text-muted-foreground">Border Color</div>
                   <div className="grid grid-cols-4 gap-2">
@@ -616,7 +563,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
 
-              {/* Icon Glassmorphism Styling */}
               <div className="space-y-3">
                 <div className="text-sm font-medium">Icon Glassmorphism Style</div>
                 
@@ -649,7 +595,6 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                   </div>
                 </div>
 
-                {/* Individual Icon Color Controls */}
                 <div className="grid grid-cols-1 gap-3">
                   <div>
                     <div className="text-sm font-medium mb-2 text-muted-foreground">Icon Color</div>
@@ -675,7 +620,7 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
               
-              {/* Border Radius */}
+
               <div>
                 <div className="text-sm font-medium mb-2">Border Radius</div>
                 <div className="grid grid-cols-4 gap-2">
@@ -695,7 +640,7 @@ export function ComponentCustomizer({ selectedItem, onUpdateItem }: ComponentCus
                 </div>
               </div>
               
-              {/* Overlay Opacity */}
+    
               <div>
                 <div className="text-sm font-medium mb-2">Overlay Opacity</div>
                 <div className="grid grid-cols-5 gap-2">

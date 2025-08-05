@@ -3,16 +3,23 @@
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { 
   Trash2, 
   Edit3, 
   Copy, 
   Eye,
   EyeOff,
-  Move
+  Move,
+  User,
+  Award,
+  BarChart3,
+  GitBranch,
+  Code,
+  Activity,
+  Zap,
+  Shield,
+  Image as ImageIcon
 } from "lucide-react"
-import { renderCustomCard } from "@/components/editor/custom-card-templates"
 
 interface BentoItem {
   id: string
@@ -22,7 +29,22 @@ interface BentoItem {
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean
-  customComponent?: string // For custom card components
+  backgroundImage?: string
+  useCustomBackground?: boolean
+  backgroundColor?: string
+  textColor?: string
+  textSize?: string
+  textWeight?: string
+  overlayOpacity?: number
+  borderRadius?: number
+  borderWidth?: number
+  borderColor?: string
+  fontFamily?: string
+  customText?: string
+  badgeText?: string
+  badgeColor?: string
+  iconColor?: string
+  iconBgColor?: string
 }
 
 interface BentoCanvasProps {
@@ -32,10 +54,12 @@ interface BentoCanvasProps {
   onAddItem: (componentType: string, gridPosition?: { row: number; col: number }) => void
   selectedItem?: string
   onSelectItem: (id: string) => void
+  onDeselectAll?: () => void
+  onExportScreenshot?: () => void
 }
 
 const GRID_COLS = 12
-const GRID_ROWS = 20
+const GRID_ROWS = 12
 
 export function BentoCanvas({ 
   items, 
@@ -43,11 +67,24 @@ export function BentoCanvas({
   onDeleteItem, 
   onAddItem,
   selectedItem, 
-  onSelectItem 
+  onSelectItem,
+  onDeselectAll 
 }: BentoCanvasProps) {
   const [draggedItem, setDraggedItem] = useState<string | null>(null)
-  const [resizing, setResizing] = useState<{ itemId: string; startSize: { rows: number; cols: number } } | null>(null)
+  const [resizing, setResizing] = useState<{ 
+    itemId: string; 
+    startSize: { rows: number; cols: number };
+    startMousePos: { x: number; y: number };
+    startItemPos: { row: number; col: number };
+  } | null>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
+  const lastResizeUpdate = useRef<number>(0)
+
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget && onDeselectAll) {
+      onDeselectAll()
+    }
+  }
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -64,7 +101,7 @@ export function BentoCanvas({
       const y = e.clientY - rect.top
       
       const cellWidth = rect.width / GRID_COLS
-      const cellHeight = 120 // Base cell height
+      const cellHeight = 140 // Base cell height
       const col = Math.floor(x / cellWidth)
       const row = Math.floor(y / cellHeight)
       
@@ -75,6 +112,7 @@ export function BentoCanvas({
     }
   }
 
+  
   const handleMouseDown = (e: React.MouseEvent, itemId: string) => {
     if ((e.target as HTMLElement).closest('.resize-handle')) return
     
@@ -92,7 +130,7 @@ export function BentoCanvas({
       const y = e.clientY - rect.top
       
       const cellWidth = rect.width / GRID_COLS
-      const cellHeight = 120
+      const cellHeight = 140
       const newCol = Math.floor(x / cellWidth)
       const newRow = Math.floor(y / cellHeight)
       
@@ -108,20 +146,30 @@ export function BentoCanvas({
     }
 
     if (resizing && canvasRef.current) {
+      const now = Date.now()
+      if (now - lastResizeUpdate.current < 16) return
+      lastResizeUpdate.current = now
+      
       const rect = canvasRef.current.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
+      
+      const deltaX = e.clientX - resizing.startMousePos.x
+      const deltaY = e.clientY - resizing.startMousePos.y
       
       const cellWidth = rect.width / GRID_COLS
-      const cellHeight = 120
-      const newCols = Math.floor(x / cellWidth) + 1
-      const newRows = Math.floor(y / cellHeight) + 1
+      const cellHeight = 140
+      const deltaCols = Math.round(deltaX / cellWidth)
+      const deltaRows = Math.round(deltaY / cellHeight)
+      
+      const newCols = Math.max(1, resizing.startSize.cols + deltaCols)
+      const newRows = Math.max(1, resizing.startSize.rows + deltaRows)
+      
+      const maxCols = GRID_COLS - resizing.startItemPos.col
+      const maxRows = GRID_ROWS - resizing.startItemPos.row
+      const clampedCols = Math.min(newCols, maxCols)
+      const clampedRows = Math.min(newRows, maxRows)
       
       const item = items.find(i => i.id === resizing.itemId)
-      if (item) {
-        const clampedCols = Math.max(1, Math.min(newCols - item.gridPosition.col, GRID_COLS - item.gridPosition.col))
-        const clampedRows = Math.max(1, Math.min(newRows - item.gridPosition.row, GRID_ROWS - item.gridPosition.row))
-        
+      if (item && (item.gridSize.cols !== clampedCols || item.gridSize.rows !== clampedRows)) {
         onUpdateItem(resizing.itemId, {
           gridSize: { cols: clampedCols, rows: clampedRows }
         })
@@ -137,18 +185,35 @@ export function BentoCanvas({
   const handleResizeStart = (e: React.MouseEvent, itemId: string) => {
     e.stopPropagation()
     const item = items.find(i => i.id === itemId)
-    if (!item) return
-
+    if (!item || !canvasRef.current) return
+    
     setResizing({ 
       itemId, 
-      startSize: { rows: item.gridSize.rows, cols: item.gridSize.cols } 
+      startSize: { rows: item.gridSize.rows, cols: item.gridSize.cols },
+      startMousePos: { x: e.clientX, y: e.clientY },
+      startItemPos: { row: item.gridPosition.row, col: item.gridPosition.col }
     })
   }
 
   const handleEdit = (itemId: string) => {
-    const newTitle = prompt("Enter new title:")
-    if (newTitle) {
+    const item = items.find(i => i.id === itemId)
+    if (!item) return
+
+    const newTitle = prompt("Enter title:", item.title)
+    if (newTitle !== null) {
       onUpdateItem(itemId, { title: newTitle })
+    }
+
+    const newCustomText = prompt("Enter custom text:", item.customText || "")
+    if (newCustomText !== null) {
+      onUpdateItem(itemId, { customText: newCustomText })
+    }
+
+    if (item.type === "badges-image") {
+      const newBadgeText = prompt("Enter badge text:", item.badgeText || "Build Passing")
+      if (newBadgeText !== null) {
+        onUpdateItem(itemId, { badgeText: newBadgeText })
+      }
     }
   }
 
@@ -165,193 +230,530 @@ export function BentoCanvas({
   }
 
   const renderComponent = (item: BentoItem) => {
-    // Helper function to safely access content properties
-    const getContentValue = (key: string, defaultValue: string = ''): string => {
-      return (item.content[key] as string) || defaultValue
-    }
+    const textColor = item.textColor || "#ffffff"
+    const textSize = item.textSize || "md"
+    const textWeight = item.textWeight || "medium"
+    const borderRadius = item.borderRadius || 12
+    const borderWidth = item.borderWidth || 2
+    const borderColor = item.borderColor || "rgba(255, 255, 255, 0.3)"
+    const fontFamily = item.fontFamily || "mono"
+    const customText = item.customText || item.title
+    const overlayOpacity = item.overlayOpacity || 0.1
+    const iconColor = item.iconColor || textColor
+    const iconBgColor = item.iconBgColor || "rgba(255, 255, 255, 0.2)"
+    
 
-    const getContentArray = (key: string, defaultValue: string[] = []): string[] => {
-      const value = item.content[key]
-      return Array.isArray(value) ? value : defaultValue
+    let backgroundStyle: React.CSSProperties = {}
+    
+    if (item.useCustomBackground && item.backgroundImage) {
+      backgroundStyle = {
+        backgroundImage: `url(${item.backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }
+    } else if (item.backgroundColor) {
+      backgroundStyle = {
+        backgroundColor: item.backgroundColor
+      }
+    } else {
+     
+      switch (item.type) {
+        case "header-image":
+          backgroundStyle = { backgroundColor: "#1e1b4b" } 
+          break
+        case "badges-image":
+          backgroundStyle = { backgroundColor: "#065f46" } 
+          break
+        case "stats-image":
+          backgroundStyle = { backgroundColor: "#164e63" } 
+          break
+        case "profile-card":
+          backgroundStyle = { backgroundColor: "#7c2d12" } 
+          break
+        case "streak-stats":
+          backgroundStyle = { backgroundColor: "#991b1b" } 
+          break
+        case "trophy-display":
+          backgroundStyle = { backgroundColor: "#a16207" }
+          break
+        case "contributions":
+          backgroundStyle = { backgroundColor: "#14532d" } 
+          break
+        case "languages":
+          backgroundStyle = { backgroundColor: "#3730a3" } 
+          break
+        case "recent-activity":
+          backgroundStyle = { backgroundColor: "#0f766e" }
+          break
+        case "visitors-counter":
+          backgroundStyle = { backgroundColor: "#374151" } 
+          break
+        default:
+          backgroundStyle = { backgroundColor: "#1f2937" } 
+      }
     }
-
-    // Handle custom cards
-    if (item.type === "custom-card" && item.customComponent) {
-      return renderCustomCard(item.customComponent)
+    
+    const getTextSizeClass = (size: string) => {
+      switch (size) {
+        case "xs": return "text-xs"
+        case "sm": return "text-sm"
+        case "md": return "text-base"
+        case "lg": return "text-lg"
+        case "xl": return "text-xl"
+        case "2xl": return "text-2xl"
+        case "3xl": return "text-3xl"
+        case "4xl": return "text-4xl"
+        case "5xl": return "text-5xl"
+        case "6xl": return "text-6xl"
+        default: return "text-base"
+      }
     }
-
+    
+    const getTextWeightClass = (weight: string) => {
+      switch (weight) {
+        case "light": return "font-light"
+        case "normal": return "font-normal"
+        case "medium": return "font-medium"
+        case "semibold": return "font-semibold"
+        case "bold": return "font-bold"
+        case "extrabold": return "font-extrabold"
+        default: return "font-medium"
+      }
+    }
+    
+    const getFontFamilyClass = (family: string) => {
+      switch (family) {
+        case "sans": return "font-sans"
+        case "serif": return "font-serif"
+        case "mono": return "font-mono"
+        default: return "font-mono"
+      }
+    }
+    
+    const textClasses = `${getTextSizeClass(textSize)} ${getTextWeightClass(textWeight)} ${getFontFamilyClass(fontFamily)}`
+    
     switch (item.type) {
       case "header-image":
         return (
-          <div className="p-4 h-full flex flex-col items-center justify-center text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg">
-            <div className="text-4xl mb-2">🎨</div>
-            <h1 className="text-xl font-bold mb-2">{getContentValue('title', "Your Repository Name")}</h1>
-            <p className="text-sm opacity-90">{getContentValue('subtitle', "Amazing project description")}</p>
-            <div className="mt-3 text-xs opacity-75">
-              Generated header banner image
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <ImageIcon className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h1 className={`${textClasses} mb-2 font-bold tracking-tight`}>
+                {customText || "GitHub Header"}
+              </h1>
+              <p className="text-xs opacity-80 font-mono">
+                Wave animation banner
+              </p>
             </div>
           </div>
         )
       
       case "badges-image":
         return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-sm font-medium mb-3">🏷️ Badges</h3>
-            <div className="flex flex-wrap gap-2 flex-1 content-start">
-              {getContentArray('badges', ["![Build Status](https://img.shields.io/badge/build-passing-brightgreen)", "![Version](https://img.shields.io/badge/version-1.0.0-blue)", "![License](https://img.shields.io/badge/license-MIT-green)"]).map((badge: string, index: number) => (
-                <Badge key={index} variant="outline" className="text-xs h-fit">{badge.replace(/!\[(.*?)\]\(.*?\)/, '$1')}</Badge>
-              ))}
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div className="flex gap-2 mb-3 flex-wrap justify-center">
+                <div className="px-2 py-1 bg-emerald-400/20 border border-emerald-400/40 rounded text-xs font-mono flex items-center gap-1">
+                  <Shield className="w-3 h-3" />
+                  {item.badgeText || "Build"}
+                </div>
+                <div className="px-2 py-1 bg-blue-400/20 border border-blue-400/40 rounded text-xs font-mono">
+                  MIT
+                </div>
+                <div className="px-2 py-1 bg-purple-400/20 border border-purple-400/40 rounded text-xs font-mono">
+                  v2.1
+                </div>
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Status Badges"}</h3>
+              <p className="text-xs opacity-80 font-mono">Shield.io badges</p>
             </div>
           </div>
         )
 
-      case "logo":
+      case "stats-image":
         return (
-          <div className="p-4 h-full flex flex-col items-center justify-center text-center">
-            <div className="text-4xl mb-2">🖼️</div>
-            <h3 className="text-base font-semibold mb-2">Project Logo</h3>
-            <p className="text-xs text-muted-foreground">![Logo](your-logo-url.png)</p>
-          </div>
-        )
-
-      case "installation":
-        return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">⚡ Installation</h3>
-            <div className="bg-muted rounded-md p-3 flex-1 flex flex-col gap-2">
-              <code className="text-xs lg:text-sm">npm install {getContentValue('package', "your-package")}</code>
-              <code className="text-xs lg:text-sm">yarn add {getContentValue('package', "your-package")}</code>
-            </div>
-          </div>
-        )
-
-      case "usage":
-        return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">💻 Usage</h3>
-            <div className="bg-muted rounded-md p-3 flex-1 overflow-y-auto">
-              <pre className="text-xs lg:text-sm whitespace-pre-wrap">
-{`import { YourComponent } from 'your-package'
-
-function App() {
-  return <YourComponent />
-}`}
-              </pre>
-            </div>
-          </div>
-        )
-
-      case "features":
-        return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">✨ Features</h3>
-            <ul className="space-y-2 flex-1 overflow-y-auto">
-              {getContentArray('features', ["🚀 Fast and lightweight", "📱 Responsive design", "🔧 Easy to customize", "📦 Zero dependencies"]).map((feature: string, index: number) => (
-                <li key={index} className="flex items-start gap-2">
-                  <span className="text-xs lg:text-sm line-clamp-2">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )
-
-      case "api":
-        return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">� API Reference</h3>
-            <div className="space-y-3 flex-1 overflow-y-auto">
-              <div className="bg-muted rounded p-2">
-                <code className="text-xs font-mono">method(params)</code>
-                <p className="text-xs text-muted-foreground mt-1">Description of the method</p>
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <BarChart3 className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "GitHub Stats"}</h3>
+              <p className="text-xs opacity-80 font-mono">Commits & contributions</p>
+              <div className="flex gap-2 mt-2 text-xs">
+                <span className="px-2 py-1 bg-white/20 rounded">1.2k stars</span>
+                <span className="px-2 py-1 bg-white/20 rounded">234 commits</span>
               </div>
             </div>
           </div>
         )
 
-      case "contributing":
+      case "profile-card":
         return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">🤝 Contributing</h3>
-            <div className="space-y-2 flex-1 overflow-y-auto text-xs lg:text-sm">
-              <p>1. Fork the project</p>
-              <p>2. Create your feature branch</p>
-              <p>3. Commit your changes</p>
-              <p>4. Push to the branch</p>
-              <p>5. Open a Pull Request</p>
-            </div>
-          </div>
-        )
-
-      case "issues":
-        return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">� Issues & Support</h3>
-            <div className="space-y-2 flex-1 text-xs lg:text-sm">
-              <p>Found a bug? Please create an issue on GitHub</p>
-              <div className="bg-muted rounded p-2 mt-2">
-                <code>github.com/user/repo/issues</code>
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-full border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <User className="w-10 h-10" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Profile Card"}</h3>
+              <p className="text-xs opacity-80 font-mono">GitHub profile overview</p>
+              <div className="flex gap-1 mt-2">
+                <div className="w-12 h-1 bg-white/40 rounded"></div>
+                <div className="w-8 h-1 bg-white/60 rounded"></div>
+                <div className="w-6 h-1 bg-white/40 rounded"></div>
               </div>
             </div>
           </div>
         )
 
-      case "license":
+      case "streak-stats":
         return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">📄 License</h3>
-            <div className="flex-1 flex flex-col justify-center">
-              <p className="text-sm lg:text-base">MIT License</p>
-              <p className="text-xs text-muted-foreground mt-1">See LICENSE file for details</p>
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <Zap className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Streak Stats"}</h3>
+              <p className="text-xs opacity-80 font-mono">Contribution streak</p>
+              <div className="mt-2 px-3 py-1 bg-red-400/20 rounded text-xs font-mono border border-red-400/40">
+                42 days
+              </div>
             </div>
           </div>
         )
 
-      case "acknowledgments":
+      case "trophy-display":
         return (
-          <div className="p-4 h-full flex flex-col">
-            <h3 className="text-base lg:text-lg font-semibold mb-3">❤️ Acknowledgments</h3>
-            <div className="space-y-2 flex-1 overflow-y-auto text-xs lg:text-sm">
-              <p>• Thanks to all contributors</p>
-              <p>• Inspired by awesome projects</p>
-              <p>• Built with amazing tools</p>
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <Award className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Trophies"}</h3>
+              <p className="text-xs opacity-80 font-mono">GitHub achievements</p>
+              <div className="flex gap-1 mt-2">
+                {Array.from({length: 5}).map((_, i) => (
+                  <div key={i} className={`w-3 h-3 rounded-full ${
+                    i < 3 ? 'bg-yellow-400' : 'bg-white/30'
+                  }`}></div>
+                ))}
+              </div>
             </div>
           </div>
         )
 
+      case "contributions":
+        return (
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <GitBranch className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Activity Graph"}</h3>
+              <p className="text-xs opacity-80 font-mono">Contribution activity</p>
+            </div>
+          </div>
+        )
+
+      case "languages":
+        return (
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <Code className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Top Languages"}</h3>
+              <p className="text-xs opacity-80 font-mono">Programming languages</p>
+              <div className="flex gap-2 mt-2">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                  <span className="text-xs">JS</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                  <span className="text-xs">PY</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case "recent-activity":
+        return (
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <Activity className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Recent Activity"}</h3>
+              <p className="text-xs opacity-80 font-mono">Latest commits & PRs</p>
+              <div className="text-xs font-mono opacity-70 mt-2 px-2 py-1 bg-white/10 rounded">
+                2h ago
+              </div>
+            </div>
+          </div>
+        )
+
+      case "visitors-counter":
+        return (
+          <div 
+            className="h-full relative overflow-hidden"
+            style={{ 
+              borderRadius: `${borderRadius}px`, 
+              ...backgroundStyle,
+              border: `${borderWidth}px solid ${borderColor}`
+            }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div 
+                className="mb-3 p-3 rounded-xl border"
+                style={{ backgroundColor: iconBgColor, borderColor }}
+              >
+                <Eye className="w-8 h-8" style={{ color: iconColor }} />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold`}>{customText || "Profile Views"}</h3>
+              <p className="text-xs opacity-80 font-mono">Visitor counter</p>
+              <div className="mt-2 px-3 py-1 bg-white/20 rounded text-xs font-mono border border-white/30">
+                2,847 views
+              </div>
+            </div>
+          </div>
+        )
       default:
         return (
-          <div className="p-4 text-center text-muted-foreground h-full flex flex-col items-center justify-center">
-            <div className="text-2xl mb-2">📦</div>
-            <p className="text-sm">Component: {item.type}</p>
+          <div 
+            className="h-full relative overflow-hidden border-2 border-gray-400/30"
+            style={{ borderRadius: `${borderRadius}px`, ...backgroundStyle }}
+          >
+            {item.useCustomBackground && item.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black"
+                style={{ opacity: overlayOpacity }}
+              />
+            )}
+            <div 
+              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+              style={{ color: textColor }}
+            >
+              <div className="mb-3 p-3 rounded-xl bg-white/20 border border-white/30">
+                <ImageIcon className="w-8 h-8 text-white/80" />
+              </div>
+              <h3 className={`${textClasses} mb-2 font-semibold leading-tight`}>{customText || item.title}</h3>
+              <p className="text-xs opacity-80 font-mono">
+                {item.type.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Component
+              </p>
+            </div>
           </div>
         )
     }
   }
 
   return (
-    <div 
-      ref={canvasRef}
-      className="flex-1 relative bg-gradient-to-br from-background via-muted/20 to-background overflow-auto p-4"
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
-        gridTemplateRows: `repeat(${GRID_ROWS}, 120px)`,
-        gap: '16px',
-        minHeight: `${GRID_ROWS * 136}px` // 120px + 16px gap
-      }}
-    >
-      {/* Grid overlay for visual feedback */}
+    <div className="relative">
       <div 
-        className="absolute inset-4 pointer-events-none opacity-[0.02] grid"
+        ref={canvasRef}
+        className="flex-1 relative overflow-auto p-1"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onClick={handleCanvasClick}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
+          gridTemplateRows: `repeat(${GRID_ROWS}, minmax(100px, 140px))`,
+          gap: '4px',
+          minHeight: `${GRID_ROWS * 120}px`,
+          maxHeight: '100vh',
+          backgroundColor: 'transparent'
+        }}
+      >
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.02] grid"
         style={{
           gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
-          gridTemplateRows: `repeat(${GRID_ROWS}, 120px)`,
-          gap: '16px'
+          gridTemplateRows: `repeat(${GRID_ROWS}, minmax(100px, 140px))`,
+          gap: '4px'
         }}
       >
         {Array.from({ length: GRID_COLS * GRID_ROWS }).map((_, index) => (
@@ -359,48 +761,47 @@ function App() {
         ))}
       </div>
 
-      {/* Drop zone indicator */}
       {items.length === 0 && (
         <div 
-          className="col-span-full row-span-4 flex items-center justify-center text-center border-2 border-dashed border-primary/20 rounded-lg bg-background/80"
+          className="col-span-full row-span-4 flex items-center justify-center text-center border-primary/20 rounded-lg bg-background/80 p-4"
         >
           <div>
-            <div className="text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold mb-2">Start Building Your README</h3>
-            <p className="text-muted-foreground mb-4 max-w-md">
-              Drag components from the sidebar to create your perfect README layout
+            <div className="text-4xl sm:text-6xl mb-4"><ImageIcon size={66} className="mx-auto"/></div>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">Build Your GitHub README</h3>
+            <p className="text-muted-foreground mb-4 max-w-md text-sm sm:text-base">
+              Drag image-based components to create your perfect GitHub README with bento layout
             </p>
-            <Badge variant="outline">Components will snap to grid</Badge>
           </div>
         </div>
       )}
 
-      {/* Render bento components */}
       {items.map((item) => (
         <Card
           key={item.id}
-          className={`relative cursor-move select-none transition-all duration-200 ${
+          className={`relative cursor-move select-none transition-all duration-300 ${
             selectedItem === item.id 
-              ? "ring-2 ring-primary shadow-lg z-10" 
-              : "hover:shadow-md"
+              ? "ring-2 ring-purple-500/60 shadow-xl z-10 border-2 border-purple-500/40" 
+              : "hover:shadow-lg border-2 border-border/40 hover:border-border/60"
           } ${!item.visible ? "opacity-50" : ""} ${
-            draggedItem === item.id ? "z-50 scale-105 shadow-2xl" : ""
-          }`}
+            draggedItem === item.id ? "z-50 scale-105 shadow-xl ring-2 ring-primary/50" : ""
+          } group bg-transparent`}
           style={{
             gridColumn: `${item.gridPosition.col + 1} / span ${item.gridSize.cols}`,
-            gridRow: `${item.gridPosition.row + 1} / span ${item.gridSize.rows}`
+            gridRow: `${item.gridPosition.row + 1} / span ${item.gridSize.rows}`,
+            borderRadius: `${item.borderRadius || 12}px`,
+            backgroundColor: 'transparent'
           }}
           onMouseDown={(e) => handleMouseDown(e, item.id)}
+          onClick={(e) => e.stopPropagation()}
         >
-          {/* Item controls */}
-          <div className={`absolute -top-3 left-0 right-0 flex items-center justify-between px-2 transition-opacity z-20 ${
+          <div className={`absolute top-2 left-2 right-2 flex items-center justify-between transition-all duration-300 z-20 ${
             selectedItem === item.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           }`}>
-            <div className="flex items-center gap-1">
-              <div className="bg-background border rounded px-2 py-1 flex items-center gap-1 shadow-sm">
-                <Move className="w-3 h-3 text-muted-foreground" />
-                <span className="text-xs font-medium">{item.title}</span>
-                <span className="text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <div className="bg-black/80 backdrop-blur-sm border border-white/20 rounded-lg px-2 py-1 flex items-center gap-2 shadow-lg">
+                <Move className="w-3 h-3 text-white" />
+                <span className="text-xs font-mono font-medium text-white hidden sm:inline">{item.title}</span>
+                <span className="text-xs text-white/70 font-mono">
                   {item.gridSize.cols}×{item.gridSize.rows}
                 </span>
               </div>
@@ -409,7 +810,7 @@ function App() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 w-6 p-0 bg-background shadow-sm"
+                className="h-7 w-7 p-0 bg-black/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-black/90 text-white hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation()
                   onUpdateItem(item.id, { visible: !item.visible })
@@ -420,7 +821,7 @@ function App() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 w-6 p-0 bg-background shadow-sm"
+                className="h-7 w-7 p-0 bg-black/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-black/90 text-white hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation()
                   handleEdit(item.id)
@@ -431,7 +832,7 @@ function App() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 w-6 p-0 bg-background shadow-sm"
+                className="h-7 w-7 p-0 bg-black/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-black/90 text-white hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation()
                   handleCopy(item.id)
@@ -442,7 +843,7 @@ function App() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 w-6 p-0 text-destructive hover:text-destructive bg-background shadow-sm"
+                className="h-7 w-7 p-0 text-red-400 hover:text-red-300 bg-black/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-black/90"
                 onClick={(e) => {
                   e.stopPropagation()
                   onDeleteItem(item.id)
@@ -453,33 +854,31 @@ function App() {
             </div>
           </div>
 
-          {/* Component content */}
           <div className="h-full overflow-hidden">
             {renderComponent(item)}
           </div>
 
-          {/* Resize handles */}
+
           {selectedItem === item.id && (
             <>
-              {/* Corner resize handle */}
               <div 
-                className="resize-handle absolute bottom-1 right-1 w-3 h-3 bg-primary cursor-se-resize opacity-80 hover:opacity-100 transition-opacity rounded-tl"
+                className="resize-handle absolute bottom-1 right-1 w-4 h-4 bg-purple-500 cursor-se-resize opacity-90 hover:opacity-100 transition-all duration-200 rounded-tl-lg shadow-lg border border-purple-400"
                 onMouseDown={(e) => handleResizeStart(e, item.id)}
               />
               
-              {/* Edge resize handles */}
               <div 
-                className="resize-handle absolute bottom-1 right-1/2 transform translate-x-1/2 w-4 h-2 bg-primary/60 cursor-s-resize rounded-t"
+                className="resize-handle absolute bottom-1 right-1/2 transform translate-x-1/2 w-5 h-3 bg-purple-500/80 cursor-s-resize rounded-t-lg hidden sm:block shadow-lg border border-purple-400/60"
                 onMouseDown={(e) => handleResizeStart(e, item.id)}
               />
               <div 
-                className="resize-handle absolute right-1 top-1/2 transform -translate-y-1/2 w-2 h-4 bg-primary/60 cursor-e-resize rounded-l"
+                className="resize-handle absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-5 bg-purple-500/80 cursor-e-resize rounded-l-lg hidden sm:block shadow-lg border border-purple-400/60"
                 onMouseDown={(e) => handleResizeStart(e, item.id)}
               />
             </>
           )}
         </Card>
       ))}
+    </div>
     </div>
   )
 }

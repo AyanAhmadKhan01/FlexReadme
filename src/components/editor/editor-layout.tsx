@@ -4,9 +4,9 @@ import { useState, useCallback, useRef } from "react"
 import { EditorSidebar } from "@/components/editor/editor-sidebar"
 import { ComponentCustomizer } from "@/components/editor/component-customizer"
 import { AiChat } from "@/components/editor/ai-chat-new"
-import { BentoCanvas } from "@/components/editor/bento-canvas-new"
+import { BentoCanvas } from "@/components/editor/bento-canvas"
 import { EditorToolbar } from "@/components/editor/editor-toolbar"
-import { CUSTOM_CARD_TEMPLATES } from "@/components/editor/custom-card-templates"
+
 
 interface BentoItem {
   id: string
@@ -16,7 +16,7 @@ interface BentoItem {
   gridPosition: { row: number; col: number }
   gridSize: { rows: number; cols: number }
   visible: boolean
-  customComponent?: string // For custom card components
+  customComponent?: string 
   backgroundImage?: string
   useCustomBackground?: boolean
   backgroundColor?: string
@@ -110,7 +110,6 @@ export function EditorLayout() {
     const defaultGridPosition = gridPosition || findAvailablePosition()
     const defaultGridSize = { rows: 2, cols: 3 }
 
-    // Handle custom cards
     let customComponent = undefined
     let actualComponentType = componentType
     let customTitle = componentType.charAt(0).toUpperCase() + componentType.slice(1)
@@ -119,10 +118,7 @@ export function EditorLayout() {
       const templateId = componentType.replace("custom-card-", "")
       customComponent = templateId
       actualComponentType = "custom-card"
-      
-      // Find the template and use its name as title
-      const template = CUSTOM_CARD_TEMPLATES.find(t => t.id === templateId)
-      customTitle = template ? template.name : "Custom Card"
+
     }
 
     if (actualComponentType === "title") {
@@ -145,7 +141,7 @@ export function EditorLayout() {
       gridSize: defaultGridSize,
       visible: true,
       customComponent,
-      backgroundImage: "https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg",
+      backgroundImage: undefined,
       useCustomBackground: false
     }
     
@@ -202,7 +198,6 @@ export function EditorLayout() {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      {/* Toolbar */}
       <EditorToolbar
         onSave={handleSave}
         onUndo={handleUndo}
@@ -219,7 +214,6 @@ export function EditorLayout() {
       <div className="flex-1 flex overflow-hidden">
         <EditorSidebar onAddComponent={handleAddComponent} />
 
-        {/* Center - Canvas */}
         <div className={`flex-1 ${isAIOpen ? 'flex' : ''}`} ref={canvasRef}>
           <BentoCanvas
             items={items}
@@ -240,7 +234,6 @@ export function EditorLayout() {
           )}
         </div>
 
-        {/* Right sidebar - Component Customizer (hidden when AI is open) */}
         {!isAIOpen && (
           <div className="w-80 p-4 overflow-hidden">
             <ComponentCustomizer 

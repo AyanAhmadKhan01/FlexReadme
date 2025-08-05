@@ -1,24 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { 
-  Type, 
   Image, 
   Code, 
   Star,
   Users,
   Shield,
-  Heart,
   Activity,
   Trophy,
   GitBranch,
-  Plus,
-  Sparkles
 } from "lucide-react"
-import { CustomCardDialog } from "@/components/editor/custom-card-dialog"
 
 const componentCategories = [
   {
@@ -29,7 +23,6 @@ const componentCategories = [
         name: "Header Banner", 
         icon: Image, 
         description: "Repository header image/logo",
-        preview: "🎨",
         githubSupported: true
       },
       { 
@@ -37,7 +30,6 @@ const componentCategories = [
         name: "Badges Row", 
         icon: Shield, 
         description: "Build status, version, license badges",
-        preview: "🏷️",
         githubSupported: true
       },
       { 
@@ -45,7 +37,6 @@ const componentCategories = [
         name: "GitHub Stats", 
         icon: Star, 
         description: "Repository statistics card",
-        preview: "�",
         githubSupported: true
       }
     ]
@@ -58,7 +49,6 @@ const componentCategories = [
         name: "Profile Card", 
         icon: Users, 
         description: "Developer profile card",
-        preview: "👤",
         githubSupported: true
       },
       { 
@@ -66,7 +56,6 @@ const componentCategories = [
         name: "Streak Stats", 
         icon: Activity, 
         description: "GitHub streak statistics",
-        preview: "�",
         githubSupported: true
       },
       { 
@@ -74,7 +63,6 @@ const componentCategories = [
         name: "Trophy Display", 
         icon: Trophy, 
         description: "GitHub trophy showcase",
-        preview: "🏆",
         githubSupported: true
       }
     ]
@@ -87,7 +75,6 @@ const componentCategories = [
         name: "Contribution Graph", 
         icon: GitBranch, 
         description: "GitHub contribution activity",
-        preview: "�",
         githubSupported: true
       },
       { 
@@ -95,7 +82,6 @@ const componentCategories = [
         name: "Top Languages", 
         icon: Code, 
         description: "Most used programming languages",
-        preview: "💻",
         githubSupported: true
       },
       { 
@@ -103,7 +89,6 @@ const componentCategories = [
         name: "Recent Activity", 
         icon: Activity, 
         description: "Latest GitHub activity feed",
-        preview: "⚡",
         githubSupported: true
       }
     ]
@@ -116,25 +101,8 @@ const componentCategories = [
         name: "Visitor Counter", 
         icon: Users, 
         description: "Profile view counter",
-        preview: "�",
         githubSupported: true
       },
-      { 
-        id: "typing-svg", 
-        name: "Typing Animation", 
-        icon: Type, 
-        description: "Animated typing text",
-        preview: "⌨️",
-        githubSupported: true
-      },
-      { 
-        id: "random-quote", 
-        name: "Daily Quote", 
-        icon: Heart, 
-        description: "Inspirational quote card",
-        preview: "💭",
-        githubSupported: true
-      }
     ]
   }
 ]
@@ -145,7 +113,6 @@ interface EditorSidebarProps {
 
 export function EditorSidebar({ onAddComponent }: EditorSidebarProps) {
   const [draggedComponent, setDraggedComponent] = useState<string | null>(null)
-  const [showCustomCardDialog, setShowCustomCardDialog] = useState(false)
 
   const handleDragStart = (e: React.DragEvent, componentId: string) => {
     setDraggedComponent(componentId)
@@ -157,37 +124,15 @@ export function EditorSidebar({ onAddComponent }: EditorSidebarProps) {
     setDraggedComponent(null)
   }
 
-  const handleCustomCardSelect = (templateId: string) => {
-    // Add a custom card component with the template ID
-    onAddComponent(`custom-card-${templateId}`)
-    setShowCustomCardDialog(false)
-  }
 
   return (
     <div className="w-80 bg-background border-r border-border/40 flex flex-col h-full">
-      {/* Custom Card Dialog */}
-      <CustomCardDialog
-        isOpen={showCustomCardDialog}
-        onClose={() => setShowCustomCardDialog(false)}
-        onSelectCard={handleCustomCardSelect}
-      />
-      
+   
       <div className="p-4 border-b border-border/40">
         <h2 className="text-lg font-semibold mb-2">Components</h2>
         <p className="text-sm text-muted-foreground mb-4">
           Drag components to the canvas or click to add
         </p>
-        
-        {/* Custom Cards Button */}
-        <Button 
-          className="w-full mb-2"
-          variant="outline"
-          onClick={() => setShowCustomCardDialog(true)}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Custom Cards
-          <Sparkles className="h-4 w-4 ml-auto" />
-        </Button>
       </div>
 
       <ScrollArea className="flex-1">

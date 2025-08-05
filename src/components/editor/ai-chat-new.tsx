@@ -78,7 +78,6 @@ export function AiChat({ onAddComponent }: AiChatProps) {
     setInputValue("")
     setIsTyping(true)
 
-    // Simulate AI response
     setTimeout(() => {
       const aiResponse = generateAIResponse(inputValue)
       setMessages(prev => [...prev, aiResponse])
@@ -176,7 +175,6 @@ export function AiChat({ onAddComponent }: AiChatProps) {
           </div>
         </div>
 
-        {/* Messages */}
         <ScrollArea className="flex-1 min-h-0">
           <div className="space-y-4 pr-2">
             {messages.map((message) => (

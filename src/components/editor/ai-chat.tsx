@@ -52,7 +52,6 @@ export function AiChat({ onGenerateComponent }: AiChatProps) {
     setInput("")
     setIsLoading(true)
 
-    // Simulate AI response
     setTimeout(() => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -136,7 +135,6 @@ export function AiChat({ onGenerateComponent }: AiChatProps) {
           </div>
         </ScrollArea>
 
-        {/* Suggestions */}
         <div className="mb-4">
           <p className="text-xs text-muted-foreground mb-2">Quick suggestions:</p>
           <div className="flex flex-wrap gap-1">
