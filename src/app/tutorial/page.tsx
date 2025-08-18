@@ -13,7 +13,7 @@ export default function Tutorial() {
   const mainVideo = {
     title: "FlexReadme Complete Tutorial",
     description: "A comprehensive guide covering all features of FlexReadme - from discovering templates to creating custom README files with our image-based generator and live editor.",
-    video: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Replace with actual tutorial video
+    video: "https://www.youtube.com/embed/YzY7-1WIRZk?si=hQNB6-qI0DbJ0bAC", 
     duration: "15:30",
     thumbnail: "https://via.placeholder.com/800x450/4F46E5/white?text=FlexReadme+Tutorial"
   }
@@ -205,7 +205,7 @@ export default function Tutorial() {
             </div>
           </div>
 
-          {/* Main Content */}
+  
           <div className="lg:col-span-2 space-y-8">
             {steps.map((step, index) => (
               <div
@@ -216,7 +216,7 @@ export default function Tutorial() {
               >
                 {activeStep === index && (
                   <div className="space-y-6">
-                    {/* Step Header */}
+    
                     <div className="bg-card rounded-lg border border-border p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-4">
@@ -244,8 +244,7 @@ export default function Tutorial() {
                       </div>
                       <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                     </div>
-
-                    {/* Single Main Video */}
+            
                     <div className="bg-card rounded-lg border border-border overflow-hidden">
                       <div className="aspect-video bg-black/90 relative group">
                         <iframe
@@ -274,7 +273,6 @@ export default function Tutorial() {
                           </div>
                         </div>
                         
-                        {/* Video Timeline for Current Step */}
                         <div className="bg-muted/30 rounded-lg p-3">
                           <div className="flex items-center justify-between text-sm">
                             <span className="font-medium">{step.title} Section:</span>
@@ -287,7 +285,6 @@ export default function Tutorial() {
                       </div>
                     </div>
 
-                    {/* Step Features */}
                     <div className="bg-card rounded-lg border border-border p-6">
                       <h4 className="font-semibold text-lg mb-4">What You'll Learn</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -300,7 +297,6 @@ export default function Tutorial() {
                       </div>
                     </div>
 
-                    {/* Text Tutorial Content */}
                     <div className="bg-card rounded-lg border border-border p-6">
                       <h4 className="font-semibold text-lg mb-4">Step-by-Step Instructions</h4>
                       <div className="prose prose-sm max-w-none">
@@ -313,7 +309,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x300/1a1a1a/ffffff?text=FlexReadme+Dashboard" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="FlexReadme Dashboard" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -336,7 +332,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x200/2563eb/ffffff?text=Three+Workflow+Options" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Workflow Options" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -387,7 +383,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x300/1e40af/ffffff?text=Discover+Templates+Gallery" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Discover Templates Gallery" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -408,7 +404,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x250/1d4ed8/ffffff?text=Search+and+Filter+Interface" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Search and Filter Interface" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -441,7 +437,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x300/2563eb/ffffff?text=Template+Preview+Modal" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Template Preview Modal" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -466,7 +462,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x300/059669/ffffff?text=Generator+Dashboard" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Generator Dashboard" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -484,7 +480,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x250/10b981/ffffff?text=GitHub+Stats+Generator" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="GitHub Stats Generator" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -529,7 +525,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x200/16a34a/ffffff?text=Badges+and+Social+Links" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Badges and Social Links Generator" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -561,7 +557,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x300/ea580c/ffffff?text=Bento+Style+Editor+Interface" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Bento Style Editor Interface" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -579,7 +575,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x250/f97316/ffffff?text=Drag+and+Drop+Components" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Drag and Drop Components" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -614,7 +610,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x200/fb923c/ffffff?text=Styling+and+Customization+Panel" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Styling and Customization Panel" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -653,7 +649,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x300/0891b2/ffffff?text=Live+README+Preview" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Live README Preview" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -674,7 +670,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x250/0e7490/ffffff?text=Export+Options+Panel" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="Export Options Panel" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />
@@ -707,7 +703,7 @@ export default function Tutorial() {
                               </h5>
                               <div className="mb-3">
                                 <img 
-                                  src="https://via.placeholder.com/600x200/06b6d4/ffffff?text=GitHub+Deployment+Success" 
+                                  src="https://res.cloudinary.com/dt5qoqw6u/image/upload/v1738516789/dr38ccxejrev185h0inp.jpg" 
                                   alt="GitHub Deployment Success" 
                                   className="w-full rounded-lg border border-border mb-3"
                                 />

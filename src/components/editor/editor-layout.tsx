@@ -3,10 +3,8 @@
 import { useState, useCallback, useRef } from "react"
 import { EditorSidebar } from "@/components/editor/editor-sidebar"
 import { ComponentCustomizer } from "@/components/editor/component-customizer"
-import { AiChat } from "@/components/editor/ai-chat-new"
 import { BentoCanvas } from "@/components/editor/bento-canvas"
 import { EditorToolbar } from "@/components/editor/editor-toolbar"
-
 
 interface BentoItem {
   id: string
@@ -40,32 +38,15 @@ export function EditorLayout() {
   const [history, setHistory] = useState<BentoItem[][]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [isSaving, setIsSaving] = useState(false)
-  const [isAIOpen, setIsAIOpen] = useState(false)
+  const [isScreenshotMode, setIsScreenshotMode] = useState(false)
   const canvasRef = useRef<HTMLDivElement>(null)
 
-  const handleExportScreenshot = useCallback(async () => {
-    if (!canvasRef.current) return
-
-    try {
-      const html2canvas = (await import('html2canvas')).default
-      
-      const canvas = await html2canvas(canvasRef.current, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false
-      })
-      
-      const link = document.createElement('a')
-      link.download = `github-readme-${Date.now()}.png`
-      link.href = canvas.toDataURL()
-      link.click()
-    } catch (error) {
-      console.error('Error capturing screenshot:', error)
-      alert('Error saving screenshot. Please try again.')
+  const handleToggleScreenshotMode = useCallback(() => {
+    setIsScreenshotMode(!isScreenshotMode)
+    if (!isScreenshotMode) {
+      setSelectedItem(undefined) 
     }
-  }, [])
+  }, [isScreenshotMode])
 
   const addToHistory = useCallback((newItems: BentoItem[]) => {
     const newHistory = history.slice(0, historyIndex + 1)
@@ -174,9 +155,7 @@ export function EditorLayout() {
     setIsSaving(false)
   }, [])
 
-  const handleToggleAI = useCallback(() => {
-    setIsAIOpen(!isAIOpen)
-  }, [isAIOpen])
+
 
   const handleUndo = useCallback(() => {
     if (historyIndex > 0) {
@@ -198,50 +177,40 @@ export function EditorLayout() {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <EditorToolbar
-        onSave={handleSave}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={historyIndex > 0}
-        canRedo={historyIndex < history.length - 1}
-        isSaving={isSaving}
-        components={items}
-        onToggleAI={handleToggleAI}
-        isAIOpen={isAIOpen}
-        onExportPNG={handleExportScreenshot}
-      />
+      {!isScreenshotMode && (
+        <EditorToolbar
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+          canUndo={historyIndex > 0}
+          canRedo={historyIndex < history.length - 1}
+          isSaving={isSaving}
+          components={items}
+          onExportPNG={handleToggleScreenshotMode}
+        />
+      )}
 
-      <div className="flex-1 flex overflow-hidden">
-        <EditorSidebar onAddComponent={handleAddComponent} />
+      <div className={`${isScreenshotMode ? 'h-screen' : 'flex-1'} flex overflow-hidden`}>
+        {!isScreenshotMode && <EditorSidebar onAddComponent={handleAddComponent} />}
 
-        <div className={`flex-1 ${isAIOpen ? 'flex' : ''}`} ref={canvasRef}>
+        <div className={`flex-1`} ref={canvasRef}>
           <BentoCanvas
             items={items}
             onUpdateItem={handleUpdateItem}
             onDeleteItem={handleDeleteItem}
             onAddItem={handleAddComponent}
-            selectedItem={selectedItem}
+            selectedItem={isScreenshotMode ? undefined : selectedItem}
             onSelectItem={setSelectedItem}
             onDeselectAll={handleDeselectAll}
-            onExportScreenshot={handleExportScreenshot}
+            isScreenshotMode={isScreenshotMode}
           />
-          
-         
-          {isAIOpen && (
-            <div className="w-96 border-l border-border/40 bg-background">
-              <AiChat onAddComponent={handleAddComponent} />
-            </div>
-          )}
         </div>
-
-        {!isAIOpen && (
+ 
           <div className="w-80 p-4 overflow-hidden">
             <ComponentCustomizer 
               selectedItem={items.find(item => item.id === selectedItem) || null}
               onUpdateItem={handleUpdateItem}
             />
-          </div>
-        )}
+          </div> 
       </div>
     </div>
   )

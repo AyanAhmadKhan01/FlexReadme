@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { 
   Trash2, 
-  Edit3, 
   Eye,
   EyeOff,
   Move,
@@ -54,7 +53,7 @@ interface BentoCanvasProps {
   selectedItem?: string
   onSelectItem: (id: string) => void
   onDeselectAll?: () => void
-  onExportScreenshot?: () => void
+  isScreenshotMode?: boolean
 }
 
 const GRID_COLS = 12
@@ -67,7 +66,8 @@ export function BentoCanvas({
   onAddItem,
   selectedItem, 
   onSelectItem,
-  onDeselectAll 
+  onDeselectAll,
+  isScreenshotMode = false
 }: BentoCanvasProps) {
   const [draggedItem, setDraggedItem] = useState<string | null>(null)
   const [resizing, setResizing] = useState<{ 
@@ -78,6 +78,7 @@ export function BentoCanvas({
   } | null>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
   const lastResizeUpdate = useRef<number>(0)
+
 
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget && onDeselectAll) {
@@ -100,7 +101,7 @@ export function BentoCanvas({
       const y = e.clientY - rect.top
       
       const cellWidth = rect.width / GRID_COLS
-      const cellHeight = 140 // Base cell height
+      const cellHeight = 140 
       const col = Math.floor(x / cellWidth)
       const row = Math.floor(y / cellHeight)
       
@@ -194,27 +195,27 @@ export function BentoCanvas({
     })
   }
 
-  const handleEdit = (itemId: string) => {
-    const item = items.find(i => i.id === itemId)
-    if (!item) return
+  // const handleEdit = (itemId: string) => {
+  //   const item = items.find(i => i.id === itemId)
+  //   if (!item) return
 
-    const newTitle = prompt("Enter title:", item.title)
-    if (newTitle !== null) {
-      onUpdateItem(itemId, { title: newTitle })
-    }
+  //   const newTitle = prompt("Enter title:", item.title)
+  //   if (newTitle !== null) {
+  //     onUpdateItem(itemId, { title: newTitle })
+  //   }
 
-    const newCustomText = prompt("Enter custom text:", item.customText || "")
-    if (newCustomText !== null) {
-      onUpdateItem(itemId, { customText: newCustomText })
-    }
+  //   const newCustomText = prompt("Enter custom text:", item.customText || "")
+  //   if (newCustomText !== null) {
+  //     onUpdateItem(itemId, { customText: newCustomText })
+  //   }
 
-    if (item.type === "badges-image") {
-      const newBadgeText = prompt("Enter badge text:", item.badgeText || "Build Passing")
-      if (newBadgeText !== null) {
-        onUpdateItem(itemId, { badgeText: newBadgeText })
-      }
-    }
-  }
+  //   if (item.type === "badges-image") {
+  //     const newBadgeText = prompt("Enter badge text:", item.badgeText || "Build Passing")
+  //     if (newBadgeText !== null) {
+  //       onUpdateItem(itemId, { badgeText: newBadgeText })
+  //     }
+  //   }
+  // }
 
   const renderComponent = (item: BentoItem) => {
     const textColor = item.textColor || "#ffffff"
@@ -765,12 +766,12 @@ export function BentoCanvas({
       {items.map((item) => (
         <Card
           key={item.id}
-          className={`relative cursor-move select-none transition-all duration-300 ${
-            selectedItem === item.id 
+          className={`relative ${isScreenshotMode ? 'cursor-default' : 'cursor-move'} select-none transition-all duration-300 ${
+            !isScreenshotMode && selectedItem === item.id 
               ? "ring-2 ring-purple-500/60 shadow-xl z-10 border-2 border-purple-500/40" 
               : "hover:shadow-lg border-0 border-border/40 hover:border-border/60"
           } ${!item.visible ? "opacity-50" : ""} ${
-            draggedItem === item.id ? "z-50 scale-105 shadow-xl ring-2 ring-primary/50" : ""
+            !isScreenshotMode && draggedItem === item.id ? "z-50 scale-105 shadow-xl ring-2 ring-primary/50" : ""
           } group bg-transparent`}
           style={{
             gridColumn: `${item.gridPosition.col + 1} / span ${item.gridSize.cols}`,
@@ -778,12 +779,13 @@ export function BentoCanvas({
             borderRadius: `${item.borderRadius || 12}px`,
             backgroundColor: 'transparent'
           }}
-          onMouseDown={(e) => handleMouseDown(e, item.id)}
-          onClick={(e) => e.stopPropagation()}
+          onMouseDown={!isScreenshotMode ? (e) => handleMouseDown(e, item.id) : undefined}
+          onClick={!isScreenshotMode ? (e) => e.stopPropagation() : undefined}
         >
-          <div className={`absolute top-2 left-2 right-2 flex items-center justify-between transition-all duration-300 z-20 ${
-            selectedItem === item.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}>
+          {!isScreenshotMode && (
+            <div className={`absolute top-2 left-2 right-2 flex items-center justify-between transition-all duration-300 z-20 ${
+              selectedItem === item.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+            }`}>
             <div className="flex items-center gap-2">
               <div className="bg-black/80 backdrop-blur-sm border border-white/20 rounded-lg px-2 py-1 flex items-center gap-2 shadow-lg">
                 <Move className="w-3 h-3 text-white" />
@@ -805,7 +807,7 @@ export function BentoCanvas({
               >
                 {item.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
               </Button>
-              <Button
+              {/* <Button
                 size="sm"
                 variant="ghost"
                 className="h-7 w-7 p-0 bg-black/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-black/90 text-white hover:text-white"
@@ -815,7 +817,7 @@ export function BentoCanvas({
                 }}
               >
                 <Edit3 className="w-3 h-3" />
-              </Button>     
+              </Button>      */}
               <Button
                 size="sm"
                 variant="ghost"
@@ -829,13 +831,14 @@ export function BentoCanvas({
               </Button>
             </div>
           </div>
+          )}
 
           <div className="h-full overflow-hidden">
             {renderComponent(item)}
           </div>
 
 
-          {selectedItem === item.id && (
+          {!isScreenshotMode && selectedItem === item.id && (
             <>
               <div 
                 className="resize-handle absolute bottom-1 right-1 w-4 h-4 bg-purple-500 cursor-se-resize opacity-90 hover:opacity-100 transition-all duration-200 rounded-tl-lg shadow-lg border border-purple-400"

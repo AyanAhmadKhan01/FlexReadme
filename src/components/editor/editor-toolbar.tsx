@@ -34,26 +34,21 @@ interface ComponentItem {
 }
 
 interface EditorToolbarProps {
-  onSave: () => void
   onUndo: () => void
   onRedo: () => void
   canUndo: boolean
   canRedo: boolean
   isSaving: boolean
   components: ComponentItem[]
-  onToggleAI?: () => void
-  isAIOpen?: boolean
   onExportPNG?: () => void
 }
 
-export function EditorToolbar({ 
-  onSave, 
+export function EditorToolbar({  
   onUndo, 
   onRedo, 
   canUndo, 
   canRedo, 
-  onToggleAI,
-  isAIOpen,
+  onExportPNG,
 }: EditorToolbarProps) {
  
   return (
@@ -81,19 +76,9 @@ export function EditorToolbar({
         </Button>
 
         <div className="w-px h-4 bg-border/40 mx-1" />
-
-        <Button
-          variant={isAIOpen ? "default" : "outline"}
-          size="sm"
-          onClick={onToggleAI}
-          className="h-6 px-2 text-xs"
-          title="Toggle AI Assistant"
-        >
-          <Bot className="w-3 h-3 mr-1" />
-          AI
-        </Button>
         <div className="w-px h-4 bg-border/40 mx-1" /> 
           <Button
+              onClick={onExportPNG}
               size="sm"
               className="h-6 px-2 text-xs"
             >
